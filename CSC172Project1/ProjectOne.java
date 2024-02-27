@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+@SuppressWarnings({"unused", "resource"})
 
 // REMEBER TO REMOVE PACKAGES BEFORE SUBMISSION
 public class ProjectOne {
