@@ -1,7 +1,7 @@
 {
     "java.project.sourcePaths": [
-        "src",
-        "172Proj1"
+        "172Proj1",
+        "CSC172Project1"
     ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [

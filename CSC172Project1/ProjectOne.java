@@ -19,7 +19,7 @@ public class ProjectOne {
         System.out.println("Output file: ");
         String outputFileName = s.nextLine();
         File outputFile = new File(outputFileName);
-        FileReader inputReader = new FileReader(inputFileName);
+        //FileReader inputReader = new FileReader(inputFileName);
         FileWriter fw = new FileWriter(outputFileName);
         //doEncrypt()
         //printf("Secret key: %s \n", secretKey);
