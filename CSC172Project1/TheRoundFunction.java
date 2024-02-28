@@ -87,18 +87,16 @@ public class TheRoundFunction {
                 return (a + b + c + d); // from here, need to permute
         }
 
-        public static void splitIt(String s) { // return long later
-                int m = s.length() / 2;
-                StringBuilder L = new StringBuilder(m);
-                StringBuilder R = new StringBuilder(m);
-                for (char c : s.toCharArray()) {
-                        if (s.indexOf(c) < m) {
-                                L.append(c);
-                        } else { // first half into L, second half into R
-                                R.append(c);
-                        } // TODO: Make this also work for splitting 32bit String
-                          // into four 8-bit Strings (can probably if/else length)
-                }
+        // split string into 2 equal length strings
+        public String[] splitIt(String block) {
+                int length = block.length();
+                // break string into 2 equal parts
+                String L = block.substring(0, length / 2);
+                String R = block.substring(length / 2, length);
+                // put 2 parts into array
+                String[] split = { L, R };
+                // return array
+                return split;
         }
 
         public static String xorIt(String binary1, String binary2) { // binary2 is the round key ki

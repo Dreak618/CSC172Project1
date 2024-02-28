@@ -9,13 +9,14 @@ public class Encrypter {
     private ArrayList<String> Blocks = new ArrayList<String>(); // List of blocks
     private int charCount = 0; // used to keep track of how many chars in blocks
     private String currentBlock = "";
+    private TheRoundFunction roundFunction = new TheRoundFunction();
 
-    public Encrypter(String inputFilePath) {
+    public Encrypter(String inputFilePath, String inputKey) {
         // take the file and break it into blocks
         createBlocks(inputFilePath);
         // encrypt the blocks
         for (String block : Blocks) {
-            block = encryptBlock(block);
+            block = encryptBlock(block, inputKey);
         }
         // write encrypted blocks to file
         writeBlocks(inputFilePath);
@@ -53,12 +54,7 @@ public class Encrypter {
             // Convert char to binary
             String currentCharBinary = Integer.toBinaryString(line.charAt(i));
 
-            /*
-             * since toBinaryString does not always give an 8 bit string, adds leading 0s to
-             * the binary string until it is 8 bits long. The first binary value given by
-             * toBinaryString is always a 1 and so this re-adds the leading 0s to the char
-             * binary values
-             */
+            // add leading 0s to char binary string if needed to make it 8 bytes
             while (currentCharBinary.length() < 8) {
                 currentCharBinary = "0" + currentCharBinary;
             }
@@ -76,21 +72,25 @@ public class Encrypter {
     }
 
     // TODO: method will call all encryption of blocks
-    public String encryptBlock(String block) {
+    public String encryptBlock(String block, String inputKey) {
         // Split Block into 2 32 bit strings
-        String R = block.substring(0, 32);
-        String L = block.substring(32, 64);
+        String[] split = roundFunction.splitIt(block);
+        String L = split[0];
+        String R = split[1];
 
         // round function and swap
         TheRoundFunction roundFunction = new TheRoundFunction();
         for (int i = 0; i < 10; i++) {
             roundFunction.roundFunction(L, R);
+
+            // swap
             String swappy = "";
             swappy = L;
             L = R;
             R = swappy;
         }
-        return R + L;
+        // return ecrypted block
+        return L + R;
     }
 
     // writes blocks to file

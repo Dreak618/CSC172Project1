@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 // REMEBER TO REMOVE PACKAGES BEFORE SUBMISSION
 public class ProjectOne {
-    private String inputFilePath;
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
         // Test cases here
@@ -19,12 +18,23 @@ public class ProjectOne {
         // commented out for texting, if mode choosing and path providing needed
         // uncomment following 2 lines and comment the 2 after instead
         // int mode = modeChooser();
-        // inputFilePath = getFilePath();
-        inputFilePath = "CSC172Project1/CSC172Project1/testText.txt"; // rn hardcoded mode and path
+
+        // get file path and key
+        // Scanner s = new Scanner(System.in);
+        // System.out.print("Enter Filename: ");
+        // String inputFilePath = s.nextLine();
+        // System.out.println("enter key");
+        // String inputKey = s.nextLine();
+        // s.close();
+
+        // rn hardcoded mode and path for texting
+        String inputFilePath = "CSC172Project1/CSC172Project1/testText.txt";
+        String inputKey = "";
         int mode = 0;
 
         if (mode == 0) {// if mode is 0 encrypts
-            new Encrypter(inputFilePath);
+            encryption(inputFilePath, inputKey);
+            // for texting
             new Decrypter(inputFilePath + ".encrypted");
         } else if (mode == 1) { // if mode is 1 decrypts
             new Decrypter(inputFilePath);
@@ -46,12 +56,7 @@ public class ProjectOne {
         }
     }
 
-    public String getFilePath() {
-        Scanner s = new Scanner(System.in);
-        System.out.print("Enter Filename: ");
-        String filePath = s.nextLine();
-        s.close();
-        return filePath;
-
+    public void encryption(String inputFilePath, String inputKey) {
+        new Encrypter(inputFilePath, inputKey);
     }
 }
