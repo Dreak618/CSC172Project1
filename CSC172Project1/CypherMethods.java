@@ -1,4 +1,4 @@
-public class TheRoundFunction {
+public class CypherMethods {
         private static String[][] sTable = new String[][] { // the S-Table
                         { "01100011", "01111100", "01110111", "01111011", "11110010", "01101011", "01101111",
                                         "11000101",
@@ -99,15 +99,13 @@ public class TheRoundFunction {
                 return split;
         }
 
-        public static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
-                StringBuilder xOr = new StringBuilder(binary1.length());
-                char[] b1 = binary1.toCharArray();
-                char[] b2 = binary2.toCharArray();
-                for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
-                        if (b1[i] == b2[i]) {
-                                xOr.append(0);
+        public static String xorIt(String binaryText, String roundKey) { // binary2 is the round key ki
+                String xOr = "";
+                for (int i = 0; (i < binaryText.length() && i < roundKey.length()); i++) {
+                        if (binaryText.charAt(i) == roundKey.charAt(i)) {
+                                xOr += 0;
                         } else {
-                                xOr.append(1);
+                                xOr += 1;
                         }
                 }
                 return xOr.toString();

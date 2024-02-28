@@ -9,7 +9,7 @@ public class Encrypter {
     private ArrayList<String> Blocks = new ArrayList<String>(); // List of blocks
     private int charCount = 0; // used to keep track of how many chars in blocks
     private String currentBlock = "";
-    private TheRoundFunction roundFunction = new TheRoundFunction();
+    private CypherMethods cypherMethods = new CypherMethods();
 
     public Encrypter(String inputFilePath, String inputKey) {
         // take the file and break it into blocks
@@ -74,14 +74,13 @@ public class Encrypter {
     // TODO: method will call all encryption of blocks
     public String encryptBlock(String block, String inputKey) {
         // Split Block into 2 32 bit strings
-        String[] split = roundFunction.splitIt(block);
+        String[] split = cypherMethods.splitIt(block);
         String L = split[0];
         String R = split[1];
 
         // round function and swap
-        TheRoundFunction roundFunction = new TheRoundFunction();
         for (int i = 0; i < 10; i++) {
-            roundFunction.roundFunction(L, R);
+            cypherMethods.roundFunction(L, R);
 
             // swap
             String swappy = "";
