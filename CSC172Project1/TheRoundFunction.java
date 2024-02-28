@@ -67,16 +67,12 @@ public class TheRoundFunction {
         };
 
         public static void roundFunction(String L, String R) { // give this both halves
-                String swappy = "";
-                for (int i = 0; i < 10; i++) {
-                        // String S = xorIt(null, null);// haven't decided how exactly to do this yet
-                        // S = sBox(S);
-                        // S = permuteIt(S);
-                        permuteIt(sBox(xorIt(null, null)));
-                        swappy = L;
-                        L = R;
-                        R = swappy;
-                }
+
+                // String S = xorIt(null, null);// haven't decided how exactly to do this yet
+                // S = sBox(S);
+                // S = permuteIt(S);
+                permuteIt(sBox(xorIt(null, null)));
+
         }
 
         public static String sBox(String s) { // output string[]?
