@@ -1,6 +1,7 @@
 
 public interface requiredMethodsList {
-
+    // methods marked as custom must be original  
+      
     // xorIt(binary1, binary2){} - Custom
 
     // shiftIt(binaryInput){} - Custom
