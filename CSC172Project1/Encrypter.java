@@ -32,6 +32,13 @@ public class Encrypter {
             while ((line = reader.readLine()) != null) {
                 lineToBinary(line);
             }
+            while (currentBlock.length() < 64 && !currentBlock.equals("")) {
+                currentBlock += "00000000";
+            }
+            if (!currentBlock.equals("")) {
+                Blocks.add(currentBlock);
+            }
+
         } catch (IOException e) {
             System.out.println("Error reading file while encrypting");
         }
