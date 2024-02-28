@@ -1,15 +1,16 @@
 
 public interface requiredMethodsList {
+    // methods marked as custom must be original  
+      
+    // xorIt(binary1, binary2){} - Custom
 
-    // xorIt(binary1, binary2){}
+    // shiftIt(binaryInput){} - Custom
 
-    // shiftIt(binaryInput){}
+    // permuteIt(binaryInput){} - Custom
 
-    // permuteIt(binaryInput){}
+    // SubstitutionS(binaryInput){} - Custom
 
-    // SubstitutionS(binaryInput){}
-
-    // functionF(rightHalf, subkey){}
+    // functionF(rightHalf, subkey){} - Custom
 
     // encryptBlock(block, inputKey){}
 
