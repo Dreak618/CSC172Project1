@@ -1,14 +1,15 @@
 public class TheRoundFunction {
 
-    public static void roundFunction(String L, String R){  // give this both halves
+    public static void roundFunction(String L, String R) { // give this both halves
         String swappy = "";
-        for (int i = 0; i < 10; i ++){
+        for (int i = 0; i < 10; i++) {
             xorIt(null, null);
             swappy = L;
             L = R;
             R = swappy;
         }
     }
+
     public static void splitIt(String s) { // return long later
         int m = s.length() / 2;
         StringBuilder L = new StringBuilder(m);
@@ -18,8 +19,9 @@ public class TheRoundFunction {
                 L.append(c);
             } else { // first half into L, second half into R
                 R.append(c);
-            } // TODO: Make this also work for splitting 32bit String
-             // into four 8-bit Strings (can probably if/else length)
+            }
+            // TODO: Make this also work for splitting 32bit String
+            // into four 8-bit Strings (can probably if/else length)
         }
     }
 
@@ -52,7 +54,8 @@ public class TheRoundFunction {
             // adds the digit of b located at (the value of p[i] - 1)
         } // -1 so we don't get array out of bounds error
     }
-    public static void functionF(String righthalf, String subkey){
+
+    public static void functionF(String righthalf, String subkey) {
 
     }
 
