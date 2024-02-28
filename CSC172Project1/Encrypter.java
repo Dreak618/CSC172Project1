@@ -1,3 +1,4 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -5,69 +6,68 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Encrypter {
+    private ArrayList<String> Blocks = new ArrayList<String>();
     private String encryptPath, inputFilePath;
+    private int charCount = 0;
+    private String currentBlock = "";
 
     public Encrypter(String inputFilePath) {
         this.inputFilePath = inputFilePath;
         createEncryptedFile();
-        encryptFile();
-    }
-
-    private void encryptFile() {
-        ArrayList<String> Blocks = new ArrayList<String>();
-        try (FileReader reader = new FileReader(inputFilePath)) {
-            String fileToString = reader.toString();
-            String blockString = "";
-            for (int i = 0; i < fileToString.length(); i++) {
-                if (i % 8 == 0 && i != 0) {
-                    Blocks.add(blockString);
-                    blockString = "";
-                }
-                blockString += Integer.toBinaryString(fileToString.charAt(i));
-
-                // String block;
-                // block = fileToString.substring(startPos, startPos + 4);
-                // startPos += 4;
-                // byte[] blockBytes = new byte[4];
-                // blockBytes = block.getBytes();
-                // System.out.println(blockBytes[0] + " block 0");
-                // String blockBinaryString = "";
-                // for (byte b : blockBytes) {
-                // blockBinaryString += b;
-                // }
-                // System.out.println(blockBinaryString);
-            }
-            System.out.println(Blocks.get(0));
-
-            // int block2 = reader.read();
-            // System.out.println("" + block1 + block2);
-
-        } catch (
-
-        IOException e) {
-
+        createBlocks();
+        for (String block : Blocks) {
+            encryptBlock(block);
         }
-        try (FileWriter writer = new FileWriter(encryptPath)) {
-            for (String s : Blocks) {
-                System.out.println(s.length());
-                writer.write(s + "\n");
-            }
-        } catch (IOException e) {
-
-        }
-
+        writeBlocks();
     }
-    // private int makeBlock()
 
     private void createEncryptedFile() {
         File encryptedFile = new File(inputFilePath + ".encrypted");
         encryptPath = encryptedFile.getAbsolutePath();
+    }
 
-        try (FileWriter writer = new FileWriter(encryptPath)) {
-            writer.write("File Written" + "\n");
-
+    private void createBlocks() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lineToBinary(line);
+            }
         } catch (IOException e) {
-            System.out.println("no file found");
+            System.out.println("Error reading file while encrypting");
         }
     }
+
+    private void lineToBinary(String line) {
+        for (int i = 0; i < line.length(); i++) {
+            charCount++;
+            String currentCharBinary = Integer.toBinaryString(line.charAt(i));
+            if (currentCharBinary.length() == 6) {
+                currentCharBinary = "0" + currentCharBinary;
+            }
+            if (currentCharBinary.length() == 7) {
+                currentCharBinary = "0" + currentCharBinary;
+            }
+            currentBlock += currentCharBinary;
+            if (charCount % 8 == 0 && charCount != 0) {
+                Blocks.add(currentBlock);
+                currentBlock = "";
+            }
+        }
+    }
+
+    public void writeBlocks() {
+        try (FileWriter writer = new FileWriter(encryptPath)) {
+            for (String block : Blocks) {
+                System.out.println(block.length());
+                writer.write(block + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing to file while encrypting");
+        }
+    }
+
+    private void encryptBlock(String block) {
+
+    }
+
 }
