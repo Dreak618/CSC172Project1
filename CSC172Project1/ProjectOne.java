@@ -29,7 +29,7 @@ public class ProjectOne {
         // int mode = modeChooser();
         // inputFilePath = getFilePath();
         inputFilePath = "CSC172Project1/CSC172Project1/testText.txt"; // rn hardcoded mode and path
-        int mode = 1;
+        int mode = 0;
 
         if (mode == 0) {// if mode is 0 encrypts
             Encrypter encrypter = new Encrypter(inputFilePath);
@@ -57,47 +57,25 @@ public class ProjectOne {
         System.out.print("Enter Filename: ");
         return s.nextLine();
     }
+}
 
-    protected class Encrypter {
-        private String encryptPath, inputFilePath;
+class Decrypter {
+    private String decryptPath, inputFilePath;
 
-        public Encrypter(String inputFilePath) {
-            this.inputFilePath = inputFilePath;
-            createEncryptedFile();
-        }
-
-        private void createEncryptedFile() {
-            File encryptedFile = new File(inputFilePath + ".encrypted");
-            encryptPath = encryptedFile.getAbsolutePath();
-
-            try (FileWriter writer = new FileWriter(encryptPath)) {
-                writer.write("File Written" + "\n");
-
-            } catch (IOException e) {
-                System.out.println("no file found");
-            }
-        }
-
+    protected Decrypter(String inputFilePath) {
+        this.inputFilePath = inputFilePath;
+        createDecryptedFile();
     }
 
-    protected class Decrypter {
-        private String encryptPath, inputFilePath;
+    private void createDecryptedFile() {
+        File decryptedFile = new File(inputFilePath + ".decrypted");
+        decryptPath = decryptedFile.getAbsolutePath();
+        try (FileWriter writer = new FileWriter(decryptPath)) {
+            writer.write("File Written" + "\n");
 
-        protected Decrypter(String inputFilePath) {
-            this.inputFilePath = inputFilePath;
-            createDecryptedFile();
+        } catch (IOException e) {
+            System.out.println("no file found");
         }
-
-        private void createDecryptedFile() {
-            File decryptedFile = new File(inputFilePath + ".decrypted");
-            decryptPath = decryptedFile.getAbsolutePath();
-            try (FileWriter writer = new FileWriter(decryptPath)) {
-                writer.write("File Written" + "\n");
-
-            } catch (IOException e) {
-                System.out.println("no file found");
-            }
-        }
-
     }
+
 }
