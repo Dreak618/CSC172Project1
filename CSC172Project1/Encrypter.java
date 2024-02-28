@@ -76,7 +76,7 @@ public class Encrypter {
     }
 
     // writes blocks to file
-    public void writeBlocks(String inputFilePath) {
+    private void writeBlocks(String inputFilePath) {
         // Create a file for encrypted text
         File encryptedFile = new File(inputFilePath + ".encrypted");
         String encryptPath = encryptedFile.getAbsolutePath();
@@ -92,7 +92,7 @@ public class Encrypter {
     }
 
     // TODO: method will call all encryption of blocks
-    private void encryptBlock(String block) {
+    public void encryptBlock(String block) {
 
     }
 

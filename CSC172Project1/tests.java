@@ -1,5 +1,5 @@
 public class tests {
-    public static void runTests() {
+    public static void runTests(ProjectOne project) {
         encryptBloc(); // all ones, all ones
         encryptBloc(); // all zeros, all ones
         encryptBloc(); // all zeros, zeros
@@ -11,7 +11,8 @@ public class tests {
         decryptBlock(null, null); // use given
     }
 
-    public static void encryptBloc() {}// temp to avoid errors
+    public static void encryptBloc() {
+    }// temp to avoid errors
 
     public static void encryptBloc(String block, String inputkey) {// all ones, all ones
 

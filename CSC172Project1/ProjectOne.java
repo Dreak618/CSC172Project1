@@ -5,35 +5,29 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-@SuppressWarnings({ "unused", "resource" })
-
 // REMEBER TO REMOVE PACKAGES BEFORE SUBMISSION
 public class ProjectOne {
-    private String inputFilePath, encryptPath, decryptPath;
+    private String inputFilePath;
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
         // Test cases here
         ProjectOne project = new ProjectOne();
-        tests.runTests();
-
-        // FileReader inputReader = new FileReader(inputFileName);
-        // FileWriter fw = new FileWriter(outputFileName);
-        // doEncrypt()
-        // printf("Secret key: %s \n", secretKey);
-        // printf("Output file: %s", outputFileName)
+        tests.runTests(project);
     }
 
     public ProjectOne() {
+        // commented out for texting, if mode choosing and path providing needed
+        // uncomment following 2 lines and comment the 2 after instead
         // int mode = modeChooser();
         // inputFilePath = getFilePath();
         inputFilePath = "CSC172Project1/CSC172Project1/testText.txt"; // rn hardcoded mode and path
         int mode = 0;
 
         if (mode == 0) {// if mode is 0 encrypts
-            Encrypter encrypter = new Encrypter(inputFilePath);
-            Decrypter dcEc = new Decrypter(inputFilePath + ".encrypted");
+            new Encrypter(inputFilePath);
+            new Decrypter(inputFilePath + ".encrypted");
         } else if (mode == 1) { // if mode is 1 decrypts
-            Decrypter decrypter = new Decrypter(inputFilePath);
+            new Decrypter(inputFilePath);
         }
     }
 
@@ -41,6 +35,7 @@ public class ProjectOne {
         Scanner s = new Scanner(System.in);
         System.out.print("Do you want to encrypt or decrypt (E/D): ");
         String ED = s.nextLine();
+        s.close();
         if (ED.equals("E")) {
             return 0;
         } else if (ED.equals("ED")) {
@@ -54,6 +49,9 @@ public class ProjectOne {
     public String getFilePath() {
         Scanner s = new Scanner(System.in);
         System.out.print("Enter Filename: ");
-        return s.nextLine();
+        String filePath = s.nextLine();
+        s.close();
+        return filePath;
+
     }
 }
