@@ -1,9 +1,7 @@
 
 //Nicholas Krein / Benjamin Levy 
 //File, reader, writer
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -33,6 +31,7 @@ public class ProjectOne {
 
         if (mode == 0) {// if mode is 0 encrypts
             Encrypter encrypter = new Encrypter(inputFilePath);
+            Decrypter dcEc = new Decrypter(inputFilePath + ".encrypted");
         } else if (mode == 1) { // if mode is 1 decrypts
             Decrypter decrypter = new Decrypter(inputFilePath);
         }
@@ -57,25 +56,4 @@ public class ProjectOne {
         System.out.print("Enter Filename: ");
         return s.nextLine();
     }
-}
-
-class Decrypter {
-    private String decryptPath, inputFilePath;
-
-    protected Decrypter(String inputFilePath) {
-        this.inputFilePath = inputFilePath;
-        createDecryptedFile();
-    }
-
-    private void createDecryptedFile() {
-        File decryptedFile = new File(inputFilePath + ".decrypted");
-        decryptPath = decryptedFile.getAbsolutePath();
-        try (FileWriter writer = new FileWriter(decryptPath)) {
-            writer.write("File Written" + "\n");
-
-        } catch (IOException e) {
-            System.out.println("no file found");
-        }
-    }
-
 }
