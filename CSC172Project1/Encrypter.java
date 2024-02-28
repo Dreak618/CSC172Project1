@@ -15,7 +15,7 @@ public class Encrypter {
         createBlocks(inputFilePath);
         // encrypt the blocks
         for (String block : Blocks) {
-            encryptBlock(block);
+            block = encryptBlock(block);
         }
         // write encrypted blocks to file
         writeBlocks(inputFilePath);
@@ -75,6 +75,24 @@ public class Encrypter {
         }
     }
 
+    // TODO: method will call all encryption of blocks
+    public String encryptBlock(String block) {
+        // Split Block into 2 32 bit strings
+        String R = block.substring(0, 32);
+        String L = block.substring(32, 64);
+
+        // round function and swap
+        TheRoundFunction roundFunction = new TheRoundFunction();
+        for (int i = 0; i < 10; i++) {
+            roundFunction.roundFunction(L, R);
+            String swappy = "";
+            swappy = L;
+            L = R;
+            R = swappy;
+        }
+        return R + L;
+    }
+
     // writes blocks to file
     private void writeBlocks(String inputFilePath) {
         // Create a file for encrypted text
@@ -90,23 +108,4 @@ public class Encrypter {
             System.out.println("Error writing to file while encrypting");
         }
     }
-
-    // TODO: method will call all encryption of blocks
-    public void encryptBlock(String block) {
-        // Split Block into 2 32 bit strings
-        String R = block.substring(0, 32);
-        String L = block.substring(32, 64);
-
-        // round function and swap
-        TheRoundFunction roundFunction = new TheRoundFunction();
-        for (int i = 0; i < 10; i++) {
-            roundFunction.roundFunction(L, R);
-            String swappy = "";
-            swappy = L;
-            L = R;
-            R = swappy;
-        }
-
-    }
-
 }
