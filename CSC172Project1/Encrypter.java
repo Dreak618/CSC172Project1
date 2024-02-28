@@ -71,23 +71,26 @@ public class Encrypter {
         }
     }
 
-    // TODO: method will call all encryption of blocks
+    // encyrpts 1 block at a time
     public String encryptBlock(String block, String inputKey) {
         // Split Block into 2 32 bit strings
         String[] split = cypherMethods.splitIt(block);
         String L = split[0];
         String R = split[1];
 
-        // round function and swap
+        // Steps to encrypt a block: Done 10 times to encrypt
         for (int i = 0; i < 10; i++) {
-            cypherMethods.roundFunction(L, R);
-
-            // swap
+            // do round function to R
+            R = cypherMethods.roundFunction(R, inputKey);
+            // make R equal R xOR L
+            R = cypherMethods.xorIt(R, L);
+            // swap L and R
             String swappy = "";
             swappy = L;
             L = R;
             R = swappy;
         }
+
         // return ecrypted block
         return L + R;
     }

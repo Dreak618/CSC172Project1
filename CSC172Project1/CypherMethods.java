@@ -1,5 +1,5 @@
 public class CypherMethods {
-        private static String[][] sTable = new String[][] { // the S-Table
+        private String[][] sTable = new String[][] { // the S-Table
                         { "01100011", "01111100", "01110111", "01111011", "11110010", "01101011", "01101111",
                                         "11000101",
                                         "00110000", "00000001", "01100111", "00101011", "11111110", "11010111",
@@ -66,16 +66,23 @@ public class CypherMethods {
                                         "10111011", "00010110" }
         };
 
-        public static void roundFunction(String L, String R) { // give this both halves
+        public String roundFunction(String R, String inputKey) { // give this both halves
 
                 // String S = xorIt(null, null);// haven't decided how exactly to do this yet
                 // S = sBox(S);
                 // S = permuteIt(S);
-                permuteIt(sBox(xorIt(null, null)));
+                // TODO: make sure the function works
+                // Look at suggestion in sBOX
+                return permuteIt(sBox(xorIt(null, null)));
 
         }
 
-        public static String sBox(String s) { // output string[]?
+        public String sBox(String s) { // output string[]?
+                // SUGGESTION
+                // Use Split It 4 times here insead of substring
+                // maybe split in roundfunction method instead od instide sBox so that round
+                // function has a followable sequence of actions
+                // would then have 4 string inputs instead of just 1
                 String a = s.substring(0, 7);
                 String b = s.substring(8, 15);
                 String c = s.substring(16, 23);
@@ -111,11 +118,11 @@ public class CypherMethods {
                 return xOr.toString();
         }
 
-        public static void shiftIt(String binaryinput) {
+        public void shiftIt(String binaryinput) {
 
         }
 
-        public static String permuteIt(String binaryinput) {
+        public String permuteIt(String binaryinput) {
                 int[] p = { 16, 7, 20, 21, 29, 12, 29, 17, 1, 15,
                                 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
                                 3, 9, 19, 13, 30, 6, 22, 11, 4, 25 };
@@ -128,7 +135,7 @@ public class CypherMethods {
                 return sb.toString();
         }
 
-        public static void functionF(String righthalf, String subkey) {
+        public void functionF(String righthalf, String subkey) {
 
         }
 
