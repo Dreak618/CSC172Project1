@@ -38,8 +38,8 @@ public class Encrypter {
                     charCount++;
                     currentBlock += "00000000";
                 }
+                Blocks.add(currentBlock);
             }
-            Blocks.add(currentBlock); // still want to add even if charCount % 8 == 0
             reader.close();
         } catch (IOException e) {
             System.out.println("Error reading file while encrypting");
