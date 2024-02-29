@@ -77,21 +77,23 @@ public class CipherMethods {
 
         }
 
-        public String sBox(String s) { // output string[]?
+        public String sBox(String s) { 
                 // SUGGESTION
                 // Use Split It 4 times here insead of substring
                 // maybe split in roundfunction method instead od instide sBox so that round
                 // function has a followable sequence of actions
                 // would then have 4 string inputs instead of just 1
-                String a = s.substring(0, 7);
-                String b = s.substring(8, 15);
-                String c = s.substring(16, 23);
-                String d = s.substring(24, 31);
-                String[] e = { a, b, c, d };
-                for (String f : e) {
-                        f = sTable[Integer.parseInt(f.substring(0, 03), 2)][Integer.parseInt(f.substring(4, 8), 2)];
+                StringBuilder result = new StringBuilder(s.length());
+                String[] sp2 = splitIt(s);
+                String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) };
+                for (int i = 0; i < splits.length; i++) {
+                        for (int j = 0; j < (splits[0].length); j++) {
+                                splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer
+                                                .parseInt(splits[i][j].substring(4, 8), 2)];
+                                result.append(splits[i][j]);
+                        }
                 }
-                return (a + b + c + d); // from here, need to permute
+                return result.toString(); // from here, need to permute
         }
 
         // split string into 2 equal length strings
