@@ -67,11 +67,11 @@ public class CipherMethods {
         };
 
         // public String roundFunction(String R, String inputKey) {
-                // THIS IS FUNCTIONF NOW - because that's a req'd method name
+        // THIS IS FUNCTIONF NOW - because that's a req'd method name
         // }
 
-        public String substitutionS(String binaryInput) { 
-                
+        public String substitutionS(String binaryInput) {
+
                 StringBuilder result = new StringBuilder(binaryInput.length());
                 String[] sp2 = splitIt(binaryInput);
                 String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) };
@@ -112,11 +112,11 @@ public class CipherMethods {
         public String shiftIt(String binaryinput) {
                 char[] b = binaryinput.toCharArray();
                 char e1 = binaryinput.toCharArray()[0]; // hold 1st element
-                for (int i = 1; i < b.length-1; i++){
-                        b[i-1] = b[i]; // shift every element left one
+                for (int i = 1; i < b.length - 1; i++) {
+                        b[i - 1] = b[i]; // shift every element left one
                 }
-                b[b.length-1] = e1; // place first element at end to finish shift
-                return b.toString(); 
+                b[b.length - 1] = e1; // place first element at end to finish shift
+                return b.toString();
         }
 
         public String permuteIt(String binaryinput) {
@@ -136,15 +136,17 @@ public class CipherMethods {
                 // TODO: make sure the function works
                 // TODO: BEN - check comment on loop in encryption
                 // Look at suggestion in substitutionS
-                subkey =  keyScheduleTransform(subkey); // do this first to create this iteration's round key
+                subkey = keyScheduleTransform(subkey); // do this first to create this iteration's round key
                 return permuteIt(substitutionS(xorIt(rightHalf, subkey.substring(0, 31)))); // round key must be 32 bits
 
         }
-        public String keyScheduleTransform(String inputkey){
+
+        public String keyScheduleTransform(String inputkey) {
                 String[] CD = splitIt(inputkey);
-                String C = shiftIt(CD[0]), D = shiftIt(CD[1]);
-                
-                return C+D; // TODO: Finish function?
+                String C = shiftIt(CD[0]);
+                String D = shiftIt(CD[1]);
+
+                return C + D; // TODO: Finish function?
         }
 
 }

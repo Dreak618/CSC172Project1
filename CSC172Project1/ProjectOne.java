@@ -9,59 +9,45 @@ import java.util.Scanner;
 public class ProjectOne {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        // Test cases here
-        ProjectOne project = new ProjectOne();
-        runTests(project);
-    }
-
-    public ProjectOne() {
-        // commented out for texting, if mode choosing and path providing needed
-        // uncomment following 2 lines and comment the 2 after instead
-        // int mode = modeChooser();
+        Scanner s = new Scanner(System.in);
 
         // get file path and key
-        // Scanner s = new Scanner(System.in);
-        // System.out.print("Enter Filename: ");
-        // String inputFilePath = s.nextLine();
+        // System.out.print("Enter File Name: ");
+        // String inputFile = s.nextLine();
         // System.out.println("enter key");
         // String inputKey = s.nextLine();
-        // s.close();
 
         // rn hardcoded mode and path for texting
-        String inputFilePath = "CSC172Project1/CSC172Project1/testText.txt";
-        String inputKey = "";
-        boolean encrypt = true; //redid mode with a boolean here
+        String inputFile = "data.txt";
+        String inputKey = "00000000000000000000000000000000";
 
-        if (encrypt) {// if true, do encrypt
-            encryption(inputFilePath, inputKey);
-            // for texting
-            new Decrypter(inputFilePath + ".encrypted");
-        } else { // else, do decrypt
-            new Decrypter(inputFilePath);
+        // System.out.print("Do you want to encrypt or decrypt (E/D): ");
+        // String ED = s.next();
+        // rn hardcoded
+        String ED = "E";
+
+        if (ED.equals("E")) {
+            encryption(inputFile, inputKey);
+            // for testing
+            decryption(inputFile + ".encrypted", inputKey);
+        } else if (ED.equals("ED")) {
+            new Decrypter(inputFile);
         }
+        s.close();
+        runTests();
     }
 
-    // public int modeChooser() { -- want to preferably do scanner things in main for readability
-    //     Scanner s = new Scanner(System.in);
-    //     System.out.print("Do you want to encrypt or decrypt (E/D): ");
-    //     String ED = s.nextLine();
-    //     s.close();
-    //     if (ED.equals("E")) {
-    //         return 0;
-    //     } else if (ED.equals("ED")) {
-    //         return 1;
-    //     } else {
-    //         System.out.println("Invalid mode, run again and type E to Encrypt or D to Decrypt");
-    //         return -1;
-    //     }
-    // }
-
-    public void encryption(String inputFilePath, String inputKey) {
+    public static void encryption(String inputFilePath, String inputKey) {
         new Encrypter(inputFilePath, inputKey);
     }
 
-    public static void runTests(ProjectOne project) {
-        // TODO: Make test cases
+    public static void decryption(String inputFilePath, String inputKey) {
+        new Decrypter(inputFilePath);
+    }
+
+    public static void runTests() {
+        // TODO: Make test cases, also may need to rework stuff to get test case format
+        // to work but do after encryption and decryption actually work
         // Removed tests.java
 
         // encryptBloc(); // all ones, all ones

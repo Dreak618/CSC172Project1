@@ -82,7 +82,7 @@ public class Encrypter {
         // Steps to encrypt a block: Done 10 times to encrypt
         for (int i = 0; i < 10; i++) {// TODO: I think we need to make this loop happen in functionF or we have to
                                       // pass the individual subkeys back up here so we don't just use the
-                                      // same subkey every time 
+                                      // same subkey every time
             // do round function to R
             R = CipherMethods.functionF(R, inputKey);
             // make R equal R xOR L
