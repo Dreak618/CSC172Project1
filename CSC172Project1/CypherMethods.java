@@ -107,12 +107,12 @@ public class CypherMethods {
         }
 
         public static String xorIt(String binaryText, String roundKey) { // binary2 is the round key ki
-                String xOr = "";
+                StringBuilder xOr = new StringBuilder(binaryText.length());
                 for (int i = 0; (i < binaryText.length() && i < roundKey.length()); i++) {
                         if (binaryText.charAt(i) == roundKey.charAt(i)) {
-                                xOr += 0;
+                                xOr.append(0);
                         } else {
-                                xOr += 1;
+                                xOr.append(1);
                         }
                 }
                 return xOr.toString();
