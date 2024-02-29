@@ -71,11 +71,7 @@ public class CipherMethods {
         // }
 
         public String substitutionS(String binaryInput) { 
-                // SUGGESTION
-                // Use Split It 4 times here insead of substring
-                // maybe split in roundfunction method instead od instide substitutionS so that round
-                // function has a followable sequence of actions
-                // would then have 4 string inputs instead of just 1
+                
                 StringBuilder result = new StringBuilder(binaryInput.length());
                 String[] sp2 = splitIt(binaryInput);
                 String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) };
@@ -86,7 +82,7 @@ public class CipherMethods {
                                 result.append(splits[i][j]);
                         }
                 }
-                return result.toString(); // from here, need to permute
+                return result.toString();
         }
 
         // split string into 2 equal length strings
@@ -136,11 +132,12 @@ public class CipherMethods {
                 return sb.toString();
         }
 
-        public String functionF(String R, String subkey) {
+        public String functionF(String rightHalf, String subkey) {
                 // TODO: make sure the function works
+                // TODO: BEN - check comment on loop in encryption
                 // Look at suggestion in substitutionS
                 subkey =  keyScheduleTransform(subkey); // do this first to create this iteration's round key
-                return permuteIt(substitutionS(xorIt(R, subkey.substring(0, 31)))); // round key must be 32 bits
+                return permuteIt(substitutionS(xorIt(rightHalf, subkey.substring(0, 31)))); // round key must be 32 bits
 
         }
         public String keyScheduleTransform(String inputkey){
