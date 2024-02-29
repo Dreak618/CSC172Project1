@@ -9,7 +9,7 @@ public class Encrypter {
     private ArrayList<String> Blocks = new ArrayList<String>(); // List of blocks
     private int charCount = 0; // used to keep track of how many chars in blocks
     private String currentBlock = "";
-    private CypherMethods cypherMethods = new CypherMethods();
+    private CipherMethods cypherMethods = new CipherMethods();
 
     public Encrypter(String inputFilePath, String inputKey) {
         // take the file and break it into blocks
