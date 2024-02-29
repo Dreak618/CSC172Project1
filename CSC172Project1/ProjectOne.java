@@ -30,7 +30,7 @@ public class ProjectOne {
         // rn hardcoded mode and path for texting
         String inputFilePath = "CSC172Project1/CSC172Project1/testText.txt";
         String inputKey = "";
-        int mode = 0;
+        int mode = 0;//do with boolean?
 
         if (mode == 0) {// if mode is 0 encrypts
             encryption(inputFilePath, inputKey);

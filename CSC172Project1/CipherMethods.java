@@ -66,25 +66,18 @@ public class CipherMethods {
                                         "10111011", "00010110" }
         };
 
-        public String roundFunction(String R, String inputKey) { // give this both halves
+        // public String roundFunction(String R, String inputKey) {
+                // THIS IS FUNCTIONF NOW - because that's a req'd method name
+        // }
 
-                // String S = xorIt(null, null);// haven't decided how exactly to do this yet
-                // S = sBox(S);
-                // S = permuteIt(S);
-                // TODO: make sure the function works
-                // Look at suggestion in sBOX
-                return permuteIt(sBox(xorIt(null, null)));
-
-        }
-
-        public String sBox(String s) { 
+        public String substitutionS(String binaryInput) { 
                 // SUGGESTION
                 // Use Split It 4 times here insead of substring
-                // maybe split in roundfunction method instead od instide sBox so that round
+                // maybe split in roundfunction method instead od instide substitutionS so that round
                 // function has a followable sequence of actions
                 // would then have 4 string inputs instead of just 1
-                StringBuilder result = new StringBuilder(s.length());
-                String[] sp2 = splitIt(s);
+                StringBuilder result = new StringBuilder(binaryInput.length());
+                String[] sp2 = splitIt(binaryInput);
                 String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) };
                 for (int i = 0; i < splits.length; i++) {
                         for (int j = 0; j < (splits[0].length); j++) {
@@ -108,10 +101,10 @@ public class CipherMethods {
                 return split;
         }
 
-        public String xorIt(String binaryText, String roundKey) { // binary2 is the round key ki
-                StringBuilder xOr = new StringBuilder(binaryText.length());
-                for (int i = 0; (i < binaryText.length() && i < roundKey.length()); i++) {
-                        if (binaryText.charAt(i) == roundKey.charAt(i)) {
+        public String xorIt(String binary1, String binary2) { // binary2 is the round key ki
+                StringBuilder xOr = new StringBuilder(binary1.length());
+                for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
+                        if (binary1.charAt(i) == binary2.charAt(i)) {
                                 xOr.append(0);
                         } else {
                                 xOr.append(1);
@@ -120,8 +113,14 @@ public class CipherMethods {
                 return xOr.toString();
         }
 
-        public void shiftIt(String binaryinput) {
-
+        public String shiftIt(String binaryinput) {
+                char[] b = binaryinput.toCharArray();
+                char e1 = binaryinput.toCharArray()[0]; // hold 1st element
+                for (int i = 1; i < b.length-1; i++){
+                        b[i-1] = b[i]; // shift every element left one
+                }
+                b[b.length-1] = e1; // place first element at end to finish shift
+                return b.toString(); 
         }
 
         public String permuteIt(String binaryinput) {
@@ -137,8 +136,18 @@ public class CipherMethods {
                 return sb.toString();
         }
 
-        public void functionF(String righthalf, String subkey) {
+        public String functionF(String R, String subkey) {
+                // TODO: make sure the function works
+                // Look at suggestion in substitutionS
+                subkey =  keyScheduleTransform(subkey); // do this first to create this iteration's round key
+                return permuteIt(substitutionS(xorIt(R, subkey.substring(0, 31)))); // round key must be 32 bits
 
+        }
+        public String keyScheduleTransform(String inputkey){
+                String[] CD = splitIt(inputkey);
+                String C = shiftIt(CD[0]), D = shiftIt(CD[1]);
+                
+                return C+D; // TODO: Finish function?
         }
 
 }

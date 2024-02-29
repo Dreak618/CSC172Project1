@@ -9,7 +9,7 @@ public class Encrypter {
     private ArrayList<String> Blocks = new ArrayList<String>(); // List of blocks
     private int charCount = 0; // used to keep track of how many chars in blocks
     private String currentBlock = "";
-    private CipherMethods cypherMethods = new CipherMethods();
+    private CipherMethods CipherMethods = new CipherMethods();
 
     public Encrypter(String inputFilePath, String inputKey) {
         // take the file and break it into blocks
@@ -38,8 +38,8 @@ public class Encrypter {
                     charCount++;
                     currentBlock += "00000000";
                 }
-                Blocks.add(currentBlock);
             }
+            Blocks.add(currentBlock); // still want to add even if charCount % 8 == 0
             reader.close();
         } catch (IOException e) {
             System.out.println("Error reading file while encrypting");
@@ -75,19 +75,20 @@ public class Encrypter {
     // encyrpts 1 block at a time
     public String encryptBlock(String block, String inputKey) {
         // Split Block into 2 32 bit strings
-        String[] split = cypherMethods.splitIt(block);
+        String[] split = CipherMethods.splitIt(block);
         String L = split[0];
         String R = split[1];
 
         // Steps to encrypt a block: Done 10 times to encrypt
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {// TODO: I think we need to make this loop happen in functionF or we have to
+                                      // pass the individual subkeys back up here so we don't just use the
+                                      // same subkey every time 
             // do round function to R
-            R = cypherMethods.roundFunction(R, inputKey);
+            R = CipherMethods.functionF(R, inputKey);
             // make R equal R xOR L
-            R = cypherMethods.xorIt(R, L);
+            R = CipherMethods.xorIt(R, L);
             // swap L and R
-            String swappy = "";
-            swappy = L;
+            String swappy = L; // simplified by a line
             L = R;
             R = swappy;
         }
