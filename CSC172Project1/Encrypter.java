@@ -40,6 +40,7 @@ public class Encrypter {
                 }
                 Blocks.add(currentBlock);
             }
+            reader.close();
         } catch (IOException e) {
             System.out.println("Error reading file while encrypting");
         }
@@ -100,12 +101,12 @@ public class Encrypter {
         // Create a file for encrypted text
         File encryptedFile = new File(inputFilePath + ".encrypted");
         String encryptPath = encryptedFile.getAbsolutePath();
-
         // Write the encrypted blocks to the file
         try (FileWriter writer = new FileWriter(encryptPath)) {
             for (String block : Blocks) {
                 writer.write(block + "\n");
             }
+            writer.close();
         } catch (IOException e) {
             System.out.println("Error writing to file while encrypting");
         }

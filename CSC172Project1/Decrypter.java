@@ -27,6 +27,7 @@ public class Decrypter {
                 // TODO: decrypt line here
                 binaryTest += line;
             }
+            reader.close();
         } catch (IOException e) {
             System.out.println("Error reading file while encrypting");
         }
@@ -65,6 +66,7 @@ public class Decrypter {
         // write decrypted text to file
         try (FileWriter writer = new FileWriter(decryptPath)) {
             writer.write(text);
+            writer.close();
         } catch (IOException e) {
             System.out.println("no file found");
         }
