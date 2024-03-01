@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class ProjectOne {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
+        runTests();
         Scanner s = new Scanner(System.in);
 
         // get file path and key
@@ -30,11 +31,11 @@ public class ProjectOne {
             encryption(inputFile, inputKey);
             // for testing
             decryption(inputFile + ".encrypted", inputKey);
-        } else if (ED.equals("ED")) {
+        } else if (ED.equals("ED")) { //TODO: BEN - Did you want this to be ED? or just D?
             new Decrypter(inputFile);
         }
         s.close();
-        runTests();
+        
     }
 
     public static void encryption(String inputFilePath, String inputKey) {
