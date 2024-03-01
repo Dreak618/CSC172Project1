@@ -137,7 +137,7 @@ public class CipherMethods {
                 // TODO: BEN - check comment on loop in encryption
                 // Look at suggestion in substitutionS
                 subkey = keyScheduleTransform(subkey); // do this first to create this iteration's round key
-                return permuteIt(substitutionS(xorIt(rightHalf, subkey.substring(0, 31)))); // round key must be 32 bits
+                return permuteIt(substitutionS(xorIt(rightHalf, subkey.substring(0, 32)))); // round key must be 32 bits
 
         }
 
