@@ -74,10 +74,10 @@ public class CipherMethods {
 
                 StringBuilder result = new StringBuilder(binaryInput.length());
                 String[] sp2 = splitIt(binaryInput);
-                String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) };
+                String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) }; // split string into 4 parts (8bit binary each)
                 for (int i = 0; i < splits.length; i++) {
-                        for (int j = 0; j < (splits[0].length); j++) {
-                                splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer
+                        for (int j = 0; j < (splits[0].length); j++) { //for each string, turn it into 2 binary numbers (by substring), then use to lookup value in S-Table
+                                splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer // then replace with S-table value
                                                 .parseInt(splits[i][j].substring(4, 8), 2)];
                                 result.append(splits[i][j]);
                         }
@@ -100,10 +100,10 @@ public class CipherMethods {
         public String xorIt(String binary1, String binary2) { // binary2 is the round key ki
                 StringBuilder xOr = new StringBuilder(binary1.length());
                 for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
-                        if (binary1.charAt(i) == binary2.charAt(i)) {
+                        if (binary1.charAt(i) == binary2.charAt(i)) { // if same value, then XOR is false
                                 xOr.append(0);
                         } else {
-                                xOr.append(1);
+                                xOr.append(1); //otherwise XOR is true
                         }
                 }
                 return xOr.toString();
@@ -122,10 +122,10 @@ public class CipherMethods {
         public String permuteIt(String binaryinput) {
                 int[] p = { 16, 7, 20, 21, 29, 12, 29, 17, 1, 15,
                                 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
-                                3, 9, 19, 13, 30, 6, 22, 11, 4, 25 };
+                                3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
                 StringBuilder sb = new StringBuilder(binaryinput.length());
                 char[] b = binaryinput.toCharArray();
-                for (int i = 0; i < binaryinput.length(); i++) {
+                for (int i = 0; i < b.length; i++) {
                         sb.append(b[p[i] - 1]);
                         // adds the digit of b located at (the value of p[i] - 1)
                 } // -1 so we don't get array out of bounds error
@@ -133,7 +133,7 @@ public class CipherMethods {
         }
 
         public String functionF(String rightHalf, String subkey) {
-                // TODO: make sure the function works
+                // TODO: make sure the function works (can't check that until we have decryption lol)
                 // TODO: BEN - check comment on loop in encryption
                 // Look at suggestion in substitutionS
                 subkey = keyScheduleTransform(subkey); // do this first to create this iteration's round key
@@ -146,7 +146,7 @@ public class CipherMethods {
                 String C = shiftIt(CD[0]);
                 String D = shiftIt(CD[1]);
 
-                return C + D; // TODO: Finish function?
+                return C + D; // TODO: Figure out how to make decryption work (not sure if i need to make whole new copies of methods that do reverse order or what)
         }
 
 }

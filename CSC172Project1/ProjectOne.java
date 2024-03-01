@@ -51,10 +51,10 @@ public class ProjectOne {
         // to work but do after encryption and decryption actually work
         // Removed tests.java
 
-        // encryptBloc(); // all ones, all ones
-        // encryptBloc(); // all zeros, all ones
-        // encryptBloc(); // all zeros, zeros
-        // encryptBloc(null, null); // block, input key (both given)
+        // encryptBlock(); // all ones, all ones
+        // encryptBlock(); // all zeros, all ones
+        // encryptBlock(); // all zeros, zeros
+        // encryptBlock(null, null); // block, input key (both given)
         // decryptBlock(); // all ones, all ones
         // decryptBlock();// all zeros, all ones
         // decryptBlock(); // all zeros, zeros
