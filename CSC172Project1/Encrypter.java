@@ -80,21 +80,19 @@ public class Encrypter {
         String[] split = splitIt(block);
         String L = split[0];
         String R = split[1];
-        String swappy; // temp variable used to swap L,R halves after each iteration
+        String temp; // temp variable used to swap L,R halves after each iteration
 
         // Steps to encrypt a block: Done 10 times to encrypt
-        for (int i = 0; i < 10; i++) {// TODO: I think we need to make this loop happen in functionF or we have to
-                                      // pass the individual subkeys back up here so we don't just use the
-                                      // same subkey every time
+        for (int i = 0; i < 10; i++) {
             // do round function to R
             inputKey = keyScheduleTransform(inputKey); // do this first to create this iteration's round key
             R = functionF(R, inputKey); //updated to use the cipher methods within Encrypter, getting rid of CipherMethods class
             // make R equal R xOR L
             R = xorIt(R, L);
             // swap L and R
-            swappy = L; 
+            temp = L; 
             L = R;
-            R = swappy;
+            R = temp;
         }
 
         // return ecrypted block

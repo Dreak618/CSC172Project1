@@ -32,7 +32,7 @@ public class ProjectOne {
             // for testing
             decryption(inputFile + ".encrypted", inputKey);
         } else if (ED.equals("D")) {
-            new Decrypter(inputFile);
+            new Decrypter(inputFile, inputKey);
         }
         s.close();
 
@@ -43,7 +43,7 @@ public class ProjectOne {
     }
 
     public static void decryption(String inputFilePath, String inputKey) {
-        new Decrypter(inputFilePath);
+        new Decrypter(inputFilePath, inputKey);
     }
 
     public static void runTests() {

@@ -8,18 +8,16 @@ import java.util.ArrayList;
 public class Decrypter {
     private ArrayList<String> Blocks = new ArrayList<String>();
     private String currentBlock = "";
-    public Decrypter(String inputFilePath) {
-        //String binaryText = decryptText(inputFilePath); // NYI
 
+    public Decrypter(String inputFilePath, String inputKey) {
+        // String binaryText = decryptText(inputFilePath); // NYI
+        String outputText = "";
         createBlocks(inputFilePath);
-        for (String block: Blocks){
+        for (String block : Blocks) {
             block = binaryToText(decryptBlock(block, inputKey));
-            block = binaryToText(block);
-            writeDecryptedBlocks(block, inputFilePath);
+            outputText += block;
         }
-
-
-
+        writeDecryptedBlocks(outputText, inputFilePath);
 
         // Convert the decrypted binary into text
         // Write decrypted binary to file
@@ -32,23 +30,20 @@ public class Decrypter {
      */
 
     // private String decryptText(String inputFilePath) { -- OLD
-    //     String binaryTest = "";
-    //     try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
-    //         String line;
-    //         while ((line = reader.readLine()) != null) {
-    //             // TODO: decrypt line here
-    //             binaryTest += line;
-    //         }
-    //         reader.close();
-    //     } catch (IOException e) {
-    //         System.out.println("Error reading file while encrypting");
-    //     }
-    //     return binaryTest;
-    // }   
-    public String decryptBlock(){
-        return null;
-    }
-
+    // String binaryTest = "";
+    // try (BufferedReader reader = new BufferedReader(new
+    // FileReader(inputFilePath))) {
+    // String line;
+    // while ((line = reader.readLine()) != null) {
+    // // TODO: decrypt line here
+    // binaryTest += line;
+    // }
+    // reader.close();
+    // } catch (IOException e) {
+    // System.out.println("Error reading file while encrypting");
+    // }
+    // return binaryTest;
+    // }
 
     private void createBlocks(String inputFilePath) {
         // Create a buffered file reader
@@ -57,18 +52,37 @@ public class Decrypter {
             // Takes every line in the file and converts the plain-text into 64bit binary
             // blocks
             while ((line = reader.readLine()) != null) {
-                for (int i = 0; i < line.length(); i++){
+                for (int i = 0; i < line.length(); i++) {
                     currentBlock += line.charAt(i);
-                }
-                if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0){
-                    Blocks.add(currentBlock);
-                    currentBlock = "";
-                }
+                    if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
+                        Blocks.add(currentBlock);
+                        currentBlock = "";
+                    }
+                } // assuming no need to pad in this direction
+
             }
             reader.close();
         } catch (IOException e) {
             System.out.println("Error reading file while encrypting");
         }
+    }
+
+    public String decryptBlock(String block, String inputKey) {
+        String[] split = splitIt(block);
+        String L = split[0];
+        String R = split[1];
+        String temp; // temp variable used to swap L,R halves after each iteration
+        for (int i = 10; i > 0; i--) {
+            inputKey = keyScheduleTransform(inputKey);
+            L = functionF(L, inputKey);
+            L = xorIt(R, L);
+
+            temp = L; // swap L, R
+            L = R;
+            R = temp;
+
+        }
+        return L + R;
     }
 
     // converts binary into plain-text
@@ -79,9 +93,12 @@ public class Decrypter {
             // gets current 8 but chunck of binary text
             String currentChar = binaryText.substring(0, 8);
             // checks if that chunk of binary text is padding
-            if (currentChar.equals("00000000")) {
+            if (currentChar.equals("00000000")){
                 // if it is cuts out the padding
-                binaryText = binaryText.substring(8);
+                if (binaryText.length() > 7){ // so it doesnt break if last char is "00000000"
+                    binaryText = binaryText.substring(8); 
+                }
+                     // 00000000 it doesn't break everything
             } else {
                 // if not, get the character associated with the given binary value
                 char nextCharacter = (char) Integer.parseInt(currentChar, 2);
@@ -115,11 +132,13 @@ public class Decrypter {
         String[] sp2 = splitIt(binaryInput);
         String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) }; // split string into 4 parts (8bit binary each)
         for (int i = 0; i < splits.length; i++) {
-                for (int j = 0; j < (splits[0].length); j++) { //for each string, turn it into 2 binary numbers (by substring), then use to lookup value in S-Table
-                        splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer // then replace with S-table value
-                                        .parseInt(splits[i][j].substring(4, 8), 2)];
-                        result.append(splits[i][j]);
-                }
+            for (int j = 0; j < (splits[0].length); j++) { // for each string, turn it into 2 binary numbers (by
+                                                           // substring), then use to lookup value in S-Table
+                splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer // then replace with
+                                                                                                  // S-table value
+                        .parseInt(splits[i][j].substring(4, 8), 2)];
+                result.append(splits[i][j]);
+            }
         }
         return result.toString();
     }
@@ -150,11 +169,11 @@ public class Decrypter {
 
     private String shiftIt(String binaryinput) {
         char[] b = binaryinput.toCharArray();
-        char e1 = binaryinput.toCharArray()[0]; // hold 1st element
-        for (int i = 1; i < b.length - 1; i++) {
-            b[i - 1] = b[i]; // shift every element left one
+        char LE = binaryinput.toCharArray()[b.length - 1]; // hold last element
+        for (int i = b.length - 1; i > 0; i--) {
+            b[i] = b[i - 1]; // shift every element right one
         }
-        b[b.length - 1] = e1; // place first element at end to finish shift
+        b[0] = LE; // place first element at end to finish shift
         return b.toString();
     }
 
@@ -171,13 +190,13 @@ public class Decrypter {
         return sb.toString();
     }
 
-    private String functionF(String rightHalf, String subkey) {
+    private String functionF(String leftHalf, String subkey) {
         // TODO: make sure the function works (can't check that until we have decryption
         // lol)
         // TODO: BEN - check comment on loop in encryption
         // Look at suggestion in substitutionS
         subkey = keyScheduleTransform(subkey); // do this first to create this iteration's round key
-        return permuteIt(substitutionS(xorIt(rightHalf, subkey.substring(0, 32)))); // round key must be 32 bits
+        return permuteIt(substitutionS(xorIt(leftHalf, subkey.substring(0, 32)))); // round key must be 32 bits
 
     }
 
@@ -190,7 +209,7 @@ public class Decrypter {
                       // whole new copies of methods that do reverse order or what)
     }
 
-    private String[][] sTable = new String[][] { // the S-Table
+    private String[][] sTable = new String[][] { // the S-Table 
             { "01100011", "01111100", "01110111", "01111011", "11110010", "01101011", "01101111",
                     "11000101",
                     "00110000", "00000001", "01100111", "00101011", "11111110", "11010111",
@@ -256,5 +275,25 @@ public class Decrypter {
                     "01000001", "10011001", "00101101", "00001111", "10110000", "01010100",
                     "10111011", "00010110" }
     };
-
+    private static String[][] inverseSTable = new String[][] { // I did this inverse by hand, and I hate myself so much right now
+        {"01100010", "00001001", "01101010", "11010101", "00110000", "00110110", "10100101", "00111000", "10111111", "01000000", "10100011", "10011110", "10000001", "11110011", "11010111", "11111011"}, 
+        {"01111100", "11100011", "00111001", "10000010", "10011011", "00101111", "11111111", "10000111", "00110100", "10001110", "01000011", "01000100", "11000100", "11011110", "11101001", "11001011"},
+        {"01010100", "01111011", "10010100", "00110010", "10100110", "11000010", "00100011", "00111101", "11101110", "01001100", "10010101", "00001011", "01000010", "11111010", "11000011", "01001110"},
+        {"00001000", "00101110", "11000001", "01100110", "00101000", "11011001", "00100100", "10110010", "01110110", "01010111", "10100010", "01001001", "01101101", "10001011", "11010001", "00100101"},
+        {"01110010", "11111000", "11110110", "01100100", "10000110", "01001001", "10011000", "00010110", "11010100", "10100100", "01011100", "11001100", "01011101", "01100101", "10110110", "10010010"},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+   
+   
+   
+    };
 }
