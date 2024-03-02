@@ -4,14 +4,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 //import javax.swing.InputMap;
 
 public class Encrypter {
-    private ArrayList<String> Blocks = new ArrayList<String>(); // List of blocks
-    private int charCount = 0; // used to keep track of how many chars in blocks
-    private String currentBlock = "";
-    private CipherMethods CipherMethods = new CipherMethods();
+    private static ArrayList<String> Blocks = new ArrayList<String>(); // List of blocks
+    private static int charCount = 0; // used to keep track of how many chars in blocks
+    private static String currentBlock = "";
 
     public Encrypter(String inputFilePath, String inputKey) {
         // take the file and break it into blocks
@@ -25,7 +25,7 @@ public class Encrypter {
     }
 
     // takes plain text and breaks it into 64 bit blocks
-    private void createBlocks(String inputFilePath) {
+    private static void createBlocks(String inputFilePath) {
         // Create a buffered file reader
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
             String line;
@@ -49,7 +49,7 @@ public class Encrypter {
     }
 
     // convert chars in line to 8 bit binary strings
-    private void lineToBinary(String line) {
+    private static void lineToBinary(String line) {
         // Loops through all chars in line
         for (int i = 0; i < line.length(); i++) {
             // increase the count of chars written, used to keeping track of block size
@@ -75,13 +75,12 @@ public class Encrypter {
     }
 
     // encyrpts 1 block at a time
-    public String encryptBlock(String block, String inputKey) {
+    public static String encryptBlock(String block, String inputKey) {
         // Split Block into 2 32 bit strings
         String[] split = splitIt(block);
         String L = split[0];
         String R = split[1];
         String temp; // temp variable used to swap L,R halves after each iteration
-
         // Steps to encrypt a block: Done 10 times to encrypt
         for (int i = 0; i < 10; i++) {
             // do round function to R
@@ -100,7 +99,7 @@ public class Encrypter {
     }
 
     // writes blocks to file
-    private void writeBlocks(String inputFilePath) {
+    private static void writeBlocks(String inputFilePath) {
         // Create a file for encrypted text
         File encryptedFile = new File(inputFilePath + ".encrypted");
         String encryptPath = encryptedFile.getAbsolutePath();
@@ -114,7 +113,7 @@ public class Encrypter {
             System.out.println("Error writing to file while encrypting");
         }
     }
-    private String substitutionS(String binaryInput) {
+    private static String substitutionS(String binaryInput) {
 
         StringBuilder result = new StringBuilder(binaryInput.length());
         String[] sp2 = splitIt(binaryInput);
@@ -130,7 +129,7 @@ public class Encrypter {
 }
 
 // split string into 2 equal length strings
-private String[] splitIt(String block) {
+private static String[] splitIt(String block) {
         int length = block.length();
         // break string into 2 equal parts
         String L = block.substring(0, length / 2);
@@ -141,7 +140,7 @@ private String[] splitIt(String block) {
         return split;
 }
 
-private String xorIt(String binary1, String binary2) { // binary2 is the round key ki
+private static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
         StringBuilder xOr = new StringBuilder(binary1.length());
         for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
                 if (binary1.charAt(i) == binary2.charAt(i)) { // if same value, then XOR is false
@@ -153,7 +152,7 @@ private String xorIt(String binary1, String binary2) { // binary2 is the round k
         return xOr.toString();
 }
 
-private String shiftIt(String binaryinput) {
+private static String shiftIt(String binaryinput) {
         char[] b = binaryinput.toCharArray();
         char e1 = binaryinput.toCharArray()[0]; // hold 1st element
         for (int i = 1; i < b.length - 1; i++) {
@@ -163,7 +162,7 @@ private String shiftIt(String binaryinput) {
         return b.toString();
 }
 
-private String permuteIt(String binaryinput) {
+private static String permuteIt(String binaryinput) {
         int[] p = { 16, 7, 20, 21, 29, 12, 29, 17, 1, 15,
                         23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
                         3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
@@ -176,21 +175,25 @@ private String permuteIt(String binaryinput) {
         return sb.toString();
 }
 
-private String functionF(String rightHalf, String subkey) { 
+private static String functionF(String rightHalf, String subkey) { 
         // round function: XORs right Half with subkey, then splits it into 4 8-bit pieces, does lookup in s-table for each, then concatenates those, permutes using P
         // TODO: make sure the function works (can't check that until we have decryption lol)
-        return permuteIt(substitutionS(xorIt(rightHalf, subkey.substring(0, 32)))); // round key must be 32 bits
+        rightHalf = xorIt(rightHalf, subkey.substring(0,32));
+        rightHalf = substitutionS(rightHalf);
+        return permuteIt(rightHalf);
+         // round key must be 32 bits
 
 }
 
-private String keyScheduleTransform(String inputkey) {
-        String[] CD = splitIt(inputkey);
-        String C = shiftIt(CD[0]);
-        String D = shiftIt(CD[1]);
-
-        return C + D; // TODO: Figure out how to make decryption work (not sure if i need to make whole new copies of methods that do reverse order or what)
+private static String keyScheduleTransform(String inputkey) {
+        // String[] CD = splitIt(inputkey);
+        // String C = shiftIt(CD[0]);
+        // String D = shiftIt(CD[1]);
+        String C = splitIt(inputkey)[0]; // had to change this because for whatever reason the old way would mess up the strings, causing crashes
+        String D = splitIt(inputkey)[1];
+        return C+D; 
 }
-private String[][] sTable = new String[][] { // the S-Table (Used for lookup in SubstitutionS)
+private static String[][] sTable = new String[][] { // the S-Table (Used for lookup in SubstitutionS)
     { "01100011", "01111100", "01110111", "01111011", "11110010", "01101011", "01101111",
                     "11000101",
                     "00110000", "00000001", "01100111", "00101011", "11111110", "11010111",
