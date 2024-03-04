@@ -72,17 +72,18 @@ public class Decrypter {
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
-                // for (int i = 10; i > 0; i--) {
-
                 temp = L; // swap L, R
                 L = R;
                 R = temp;
-                R = xorItUndo(R, L);
+                for (int i = 10; i > 0; i--) {
+                        temp = L; // swap L, R
+                        L = R;
+                        R = temp;
+                        R = xorItUndo(R, L);
 
-                // inputKey = keyScheduleTransform(inputKey);
-                // R = functionF(R, inputKey);
-
-                // }
+                        // inputKey = keyScheduleTransform(inputKey);
+                        // R = functionF(R, inputKey);
+                }
                 temp = L; // swap L, R
                 L = R;
                 R = temp;
@@ -166,17 +167,9 @@ public class Decrypter {
                 StringBuilder xOr = new StringBuilder(binary1.length());
                 for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
                         if (binary1.charAt(i) == binary2.charAt(i)) {
-                                if (binary1.charAt(i) == '0') {
-                                        xOr.append(0);
-                                } else {
-                                        xOr.append(0);
-                                }
+                                xOr.append(0);
                         } else {
-                                if (binary1.charAt(i) == '0') {
-                                        xOr.append(1);
-                                } else {
-                                        xOr.append(1);
-                                }
+                                xOr.append(1);
                         }
                 }
                 return xOr.toString();
