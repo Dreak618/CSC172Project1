@@ -52,17 +52,19 @@ public class ProjectOne {
         // System.out.println("Output for: encryption (all ones, all ones)");
 
         String string = block;
+        String key = allZerosKey;
+
         System.out.println("Start");
         splitIt(string);
         // System.out.println(string);
-        String encrypt = Encrypter.encryptBlock(string, allOnesKey);
+        String encrypt = Encrypter.encryptBlock(string, key);
         System.out.println("encrypted");
         splitIt(encrypt);
-        String decrypt = Decrypter.decryptBlock(string, allOnesKey);
+        String decrypt = Decrypter.decryptBlock(encrypt, key);
         System.out.println(" decrypted ");
         splitIt(decrypt);
         System.out.println("matching: " + (string.equals(decrypt)));
-        // System.out.println("Output for: decryption (all ones, all ones)");
+        System.out.println("Output for: decryption (all ones, all ones)");
     }
 
     public void splitIt(String s) {
@@ -88,6 +90,12 @@ public class ProjectOne {
         String block = "1100110010000000000001110101111100010001100101111010001001001100";
         String block2 = "0101011010001110111001000111100001001110010001100110000011110101";
         String block3 = "0011000101110111011100100101001001001101011010100110011111010111";
+
+        String string = block;
+        String key = allZerosKey;
+        String encrypt = Encrypter.encryptBlock(string, key);
+        String decrypt = Decrypter.decryptBlock(encrypt, key);
+        System.out.println("matching: " + (string.equals(decrypt)));
 
         System.out.println("Running Tests:");
         System.out.println("Output for: encryption (all ones, all ones)");
