@@ -85,9 +85,9 @@ public class Decrypter {
                 inputKey = keyScheduleTransform(inputKey);
                 R = functionF(R, inputKey);
                 // }
-                // temp = L; // swap L, R
-                // L = R;
-                // R = temp;
+                temp = L; // swap L, R
+                L = R;
+                R = temp;
 
                 return R + L;
         }
