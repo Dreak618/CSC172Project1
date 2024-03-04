@@ -74,10 +74,17 @@ public class CipherMethods {
 
                 StringBuilder result = new StringBuilder(binaryInput.length());
                 String[] sp2 = splitIt(binaryInput);
-                String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) }; // split string into 4 parts (8bit binary each)
+                String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) }; // split string into 4 parts (8bit binary
+                                                                          // each)
                 for (int i = 0; i < splits.length; i++) {
-                        for (int j = 0; j < (splits[0].length); j++) { //for each string, turn it into 2 binary numbers (by substring), then use to lookup value in S-Table
-                                splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer // then replace with S-table value
+                        for (int j = 0; j < (splits[0].length); j++) { // for each string, turn it into 2 binary numbers
+                                                                       // (by substring), then use to lookup value in
+                                                                       // S-Table
+                                splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer // then
+                                                                                                                  // replace
+                                                                                                                  // with
+                                                                                                                  // S-table
+                                                                                                                  // value
                                                 .parseInt(splits[i][j].substring(4, 8), 2)];
                                 result.append(splits[i][j]);
                         }
@@ -103,7 +110,7 @@ public class CipherMethods {
                         if (binary1.charAt(i) == binary2.charAt(i)) { // if same value, then XOR is false
                                 xOr.append(0);
                         } else {
-                                xOr.append(1); //otherwise XOR is true
+                                xOr.append(1); // otherwise XOR is true
                         }
                 }
                 return xOr.toString();
@@ -133,7 +140,8 @@ public class CipherMethods {
         }
 
         public String functionF(String rightHalf, String subkey) {
-                // TODO: make sure the function works (can't check that until we have decryption lol)
+                // TODO: make sure the function works (can't check that until we have decryption
+                // lol)
                 // Look at suggestion in substitutionS
                 subkey = keyScheduleTransform(subkey); // do this first to create this iteration's round key
                 return permuteIt(substitutionS(xorIt(rightHalf, subkey.substring(0, 32)))); // round key must be 32 bits
@@ -145,7 +153,8 @@ public class CipherMethods {
                 String C = shiftIt(CD[0]);
                 String D = shiftIt(CD[1]);
 
-                return C + D; // TODO: Figure out how to make decryption work (not sure if i need to make whole new copies of methods that do reverse order or what)
+                return C + D; // TODO: Figure out how to make decryption work (not sure if i need to make
+                              // whole new copies of methods that do reverse order or what)
         }
 
 }
