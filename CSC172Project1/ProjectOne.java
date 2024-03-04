@@ -51,7 +51,7 @@ public class ProjectOne {
 
         // System.out.println("Output for: encryption (all ones, all ones)");
 
-        String string = block3;
+        String string = block;
         System.out.println("Start");
         splitIt(string);
         // System.out.println(string);

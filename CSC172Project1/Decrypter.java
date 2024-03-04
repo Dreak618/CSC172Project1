@@ -73,18 +73,20 @@ public class Decrypter {
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
                 for (int i = 10; i > 0; i--) {
+
                         temp = L; // swap L, R
                         L = R;
                         R = temp;
                         R = xorItUndo(R, L);
-                        // inputKey = keyScheduleTransform(inputKey);
-                        // R = functionF(R, inputKey);
-                        // L = functionF(R, inputKey);
+
+                        inputKey = keyScheduleTransform(inputKey);
+                        R = functionF(R, inputKey);
 
                 }
                 temp = L; // swap L, R
                 L = R;
                 R = temp;
+
                 return R + L;
         }
 
@@ -208,14 +210,18 @@ public class Decrypter {
                 return sb.toString();
         }
 
-        private static String functionF(String leftHalf, String subkey) {
+        private static String functionF(String rightHalf, String subkey) {
                 // TODO: make sure the function works (can't check that until we have decryption
                 // lol)
                 // Look at suggestion in substitutionS
-                subkey = keyScheduleTransform(subkey); // do this first to create this iteration's round key
-                return permuteIt(substitutionS(xorItUndo(leftHalf, subkey.substring(0, 32)))); // round key must be 32
-                                                                                               // bits
-
+                // subkey = keyScheduleTransform(subkey); // do this first to create this
+                // iteration's round key
+                String result = rightHalf;
+                result = xorItUndo(result, subkey.substring(0, 32));
+                // result = substitutionS(result);
+                // result = permuteIt(result); // round key must be 32
+                // bits
+                return result;
         }
 
         private static String keyScheduleTransform(String inputkey) {
