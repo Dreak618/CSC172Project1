@@ -195,7 +195,6 @@ public class Decrypter {
     private static String functionF(String leftHalf, String subkey) {
         // TODO: make sure the function works (can't check that until we have decryption
         // lol)
-        // TODO: BEN - check comment on loop in encryption
         // Look at suggestion in substitutionS
         subkey = keyScheduleTransform(subkey); // do this first to create this iteration's round key
         return permuteIt(substitutionS(xorIt(leftHalf, subkey.substring(0, 32)))); // round key must be 32 bits

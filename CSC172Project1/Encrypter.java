@@ -113,27 +113,35 @@ public class Encrypter {
             System.out.println("Error writing to file while encrypting");
         }
     }
-    private static String substitutionS(String binaryInput) {
-
+    private static String substitutionS(String binaryInput) {//TODO: Fix this whole thing so it properly initializes Strings 
+        System.out.println(binaryInput);
         StringBuilder result = new StringBuilder(binaryInput.length());
-        String[] sp2 = splitIt(binaryInput);
-        String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) }; // split string into 4 parts (8bit binary each)
-        for (int i = 0; i < splits.length; i++) {
-                for (int j = 0; j < (splits[0].length); j++) { //for each string, turn it into 2 binary numbers (by substring), then use to lookup value in S-Table
-                        splits[i][j] = sTable[Integer.parseInt(splits[i][j].substring(0, 03), 2)][Integer // then replace with S-table value
-                                        .parseInt(splits[i][j].substring(4, 8), 2)];
-                        result.append(splits[i][j]);
-                }
+        String sp = splitIt(binaryInput)[0], sp2 = splitIt(binaryInput)[0];
+        String s1 = splitIt(sp)[0], s2 = splitIt(sp)[1], s3 = splitIt(sp2)[0], s4 = splitIt(sp2)[1];
+        String[] splits = {s1, s2, s3, s4};
+        System.out.println(Arrays.toString(splits));
+        // String[][] splits = { splitIt(sp2[0]), splitIt(sp2[1]) }; // split string into 4 parts (8bit binary each)
+        // for (int i = 0; i < splits[0].length; i++) {
+        //         for (int j = 0; j < (splits.length); j++) { //for each string, turn it into 2 binary numbers (by substring), then use to lookup value in S-Table
+        //                 splits[j][i] = sTable[Integer.parseInt(splits[j][i].substring(0, 4), 2)][Integer // then replace with S-table value
+        //                                 .parseInt(splits[j][i].substring(4), 2)];
+        //                 //System.out.println(splits[i][j]);
+        //                 result.append(splits[j][i]);
+        //         }
+        // }
+        for (String s: splits){
+            System.out.println(s.length());
+            s = sTable[Integer.parseInt(s.substring(0, 4), 2)][Integer.parseInt(s.substring(4), 2)];
+            result.append(s);
         }
         return result.toString();
 }
 
 // split string into 2 equal length strings
 private static String[] splitIt(String block) {
-        int length = block.length();
         // break string into 2 equal parts
-        String L = block.substring(0, length / 2);
-        String R = block.substring(length / 2, length);
+        String L = block.substring(0, block.length() / 2);
+        String R = block.substring(block.length() / 2);
         // put 2 parts into array
         String[] split = { L, R };
         // return array
