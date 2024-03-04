@@ -72,24 +72,19 @@ public class Decrypter {
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
-                // temp = L; // swap L, R
-                // L = R;
-                // R = temp;
-                // for (int i = 10; i > 0; i--) {
-                // temp = L; // swap L, R
-                // L = R;
-                // R = temp;
+                for (int i = 10; i > 0; i--) {
 
-                R = xorItUndo(R, L);
+                        R = xorItUndo(R, L);
 
-                inputKey = keyScheduleTransform(inputKey);
-                R = functionF(R, inputKey);
-                // }
-                temp = L; // swap L, R
-                L = R;
-                R = temp;
+                        inputKey = keyScheduleTransform(inputKey);
+                        R = functionF(R, inputKey);
+                        temp = L; // swap L, R
+                        L = R;
+                        R = temp;
+                }
 
                 return R + L;
+
         }
 
         // converts binary into plain-text
