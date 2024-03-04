@@ -72,16 +72,20 @@ public class Decrypter {
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
-                // for (int i = 10; i > 0; i--) {
-                // inputKey = keyScheduleTransform(inputKey);
-                // L = functionF(L, inputKey);
-                R = xorItUndo(R, L);
+                for (int i = 10; i > 0; i--) {
+                        // inputKey = keyScheduleTransform(inputKey);
+                        // R = functionF(R, inputKey);
+                        // L = functionF(R, inputKey);
+                        R = xorItUndo(R, L);
 
+                        temp = L; // swap L, R
+                        L = R;
+                        R = temp;
+
+                }
                 temp = L; // swap L, R
                 L = R;
                 R = temp;
-
-                // }
                 return R + L;
         }
 
