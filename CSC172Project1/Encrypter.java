@@ -81,23 +81,23 @@ public class Encrypter {
         String R = split[1];
         String temp; // temp variable used to swap L,R halves after each iteration
         // Steps to encrypt a block: Done 10 times to encrypt
-        // for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
 
-        // do round function to R
-        inputKey = keyScheduleTransform(inputKey); // do this first to create this
-        // iteration's round key
-        R = functionF(R, inputKey); // updated to use the cipher methods within
-        // Encrypter, getting rid of
-        // CipherMethods class
+            // do round function to R
+            inputKey = keyScheduleTransform(inputKey); // do this first to create this
+            // iteration's round key
+            R = functionF(R, inputKey); // updated to use the cipher methods within
+            // Encrypter, getting rid of
+            // CipherMethods class
 
-        // make R equal R xOR L
-        R = xorIt(R, L);
+            // make R equal R xOR L
+            R = xorIt(R, L);
 
-        // swap L and R
-        temp = L;
-        L = R;
-        R = temp;
-        // }
+            // swap L and R
+            temp = L;
+            L = R;
+            R = temp;
+        }
 
         // return ecrypted block
         return R + L;
@@ -209,6 +209,7 @@ public class Encrypter {
     }
 
     private static String keyScheduleTransform(String inputkey) {
+        // TODO: make this do something
         // String[] CD = splitIt(inputkey);
         // String C = shiftIt(CD[0]);
         // String D = shiftIt(CD[1]);
