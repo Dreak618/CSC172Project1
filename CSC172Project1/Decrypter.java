@@ -72,7 +72,6 @@ public class Decrypter {
         }
 
         public static String decryptBlock(String block, String inputKey) {
-                System.out.println(block + " pre decrypt binary text");
                 String[] split = CipherMethods.splitIt(block);
                 String L = split[0];
                 String R = split[1];
@@ -95,7 +94,7 @@ public class Decrypter {
         public static String binaryToText(String binaryText) {
                 String plainText = "";
                 // chars are in 8 bit chunks and loops until there are no chunks left
-                while (binaryText.length() > 0) {
+                while (binaryText.length() > 7) {
                         // gets current 8 but chunck of binary text
                         String currentChar = binaryText.substring(0, 8);
                         // checks if that chunk of binary text is padding
@@ -105,7 +104,7 @@ public class Decrypter {
                                         binaryText = binaryText.substring(8);
                                 }
                                 // 00000000 it doesn't break everything
-                        } else {
+                        } else  {
                                 // if not, get the character associated with the given binary value
                                 // System.out.println("next char binary " + currentChar);
                                 char nextCharacter = (char) Integer.parseInt(currentChar, 2);
