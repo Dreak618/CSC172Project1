@@ -81,22 +81,22 @@ public class Encrypter {
         String R = split[1];
         String temp; // temp variable used to swap L,R halves after each iteration
         // Steps to encrypt a block: Done 10 times to encrypt
-        // for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
+            // swap L and R
+            temp = L;
+            L = R;
+            R = temp;
+            // do round function to R
+            inputKey = keyScheduleTransform(inputKey); // do this first to create this
+            // iteration's round key
+            R = functionF(R, inputKey); // updated to use the cipher methods within
+            // Encrypter, getting rid of
+            // CipherMethods class
 
-        // do round function to R
-        inputKey = keyScheduleTransform(inputKey); // do this first to create this
-        // iteration's round key
-        R = functionF(R, inputKey); // updated to use the cipher methods within
-        // Encrypter, getting rid of
-        // CipherMethods class
+            // make R equal R xOR L
+            R = xorIt(R, L);
 
-        // make R equal R xOR L
-        R = xorIt(R, L);
-        // swap L and R
-        // temp = L;
-        // L = R;
-        // R = temp;
-        // }
+        }
 
         // return ecrypted block
         return L + R;
@@ -188,10 +188,10 @@ public class Encrypter {
         // using P
         // TODO: make sure the function works (can't check that until we have decryption
         // lol)
-        String result = "";
+        String result = rightHalf;
         result = xorIt(rightHalf, subkey.substring(0, 32));
-        result = substitutionS(rightHalf);
-        result = permuteIt(rightHalf);
+        result = substitutionS(result);
+        result = permuteIt(result);
         // round key must be 32 bits
         return result;
 

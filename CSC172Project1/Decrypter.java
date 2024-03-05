@@ -72,15 +72,15 @@ public class Decrypter {
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
-                // for (int i = 10; i > 0; i--) {
+                for (int i = 0; i < 10; i++) {
 
-                R = xorIt(R, L);
-                inputKey = keyScheduleTransform(inputKey);
-                R = functionF(R, inputKey);
-                // temp = L; // swap L, R
-                // L = R;
-                // R = temp;
-                // }
+                        R = xorIt(R, L);
+                        R = functionF(R, inputKey);
+                        inputKey = keyScheduleTransform(inputKey);
+                        temp = L; // swap L, R
+                        L = R;
+                        R = temp;
+                }
 
                 return L + R;
 
@@ -195,11 +195,12 @@ public class Decrypter {
 
         private static String functionF(String rightHalf, String subkey) {
 
-                subkey = keyScheduleTransform(subkey); // do this first to create this
                 // iteration's round key
                 String result = rightHalf;
+
                 result = permuteIt(result); // round key must be 32
                 result = substitutionS(result);
+
                 result = xorIt(result, subkey.substring(0, 32));
                 // bits
                 return result;
