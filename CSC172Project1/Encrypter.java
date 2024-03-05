@@ -84,14 +84,14 @@ public class Encrypter {
         // for (int i = 0; i < 10; i++) {
 
         // do round function to R
-        inputKey = keyScheduleTransform(inputKey); // do this first to create this
+        // inputKey = keyScheduleTransform(inputKey); // do this first to create this
         // iteration's round key
         R = functionF(R, inputKey); // updated to use the cipher methods within
         // Encrypter, getting rid of
         // CipherMethods class
 
         // make R equal R xOR L
-        R = xorIt(R, L);
+        // R = xorIt(R, L);
 
         // swap L and R
         temp = L;
@@ -182,7 +182,7 @@ public class Encrypter {
     }
 
     private static String permuteIt(String binaryinput) {
-        int[] p = { 16, 7, 20, 21, 29, 12, 29, 17, 1, 15,
+        int[] p = { 16, 7, 20, 21, 29, 12, 28, 17, 1, 15,
                 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
                 3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
         StringBuilder sb = new StringBuilder(binaryinput.length());
@@ -200,8 +200,8 @@ public class Encrypter {
         // TODO: make sure the function works (can't check that until we have decryption
         // lol)
         String result = "";
-        result = xorIt(rightHalf, subkey.substring(0, 32));
-        // result = substitutionS(rightHalf);
+        // result = xorIt(rightHalf, subkey.substring(0, 32));
+        result = substitutionS(rightHalf);
         // result = permuteIt(rightHalf);
         // round key must be 32 bits
         return result;
