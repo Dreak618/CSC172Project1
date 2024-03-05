@@ -72,16 +72,16 @@ public class Decrypter {
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
-                for (int i = 10; i > 0; i--) {
+                // for (int i = 10; i > 0; i--) {
 
-                        R = xorItUndo(R, L);
+                R = xorItUndo(R, L);
 
-                        inputKey = keyScheduleTransform(inputKey);
-                        R = functionF(R, inputKey);
-                        temp = L; // swap L, R
-                        L = R;
-                        R = temp;
-                }
+                inputKey = keyScheduleTransform(inputKey);
+                R = functionF(R, inputKey);
+                temp = L; // swap L, R
+                L = R;
+                R = temp;
+                // }
 
                 return R + L;
 
@@ -173,13 +173,14 @@ public class Decrypter {
         }
 
         private static String shiftIt(String binaryinput) {
+                StringBuilder sb = new StringBuilder(binaryinput.length());
                 char[] b = binaryinput.toCharArray();
-                char LE = binaryinput.toCharArray()[b.length - 1]; // hold last element
-                for (int i = b.length - 1; i > 0; i--) {
-                        b[i] = b[i - 1]; // shift every element right one
+                sb.append(b[b.length - 1]);
+                for (int i = 0; i < binaryinput.length() - 1; i++) {
+                        sb.append(b[i]);
+                        System.out.println(sb.length());
                 }
-                b[0] = LE; // place first element at end to finish shift
-                return b.toString();
+                return sb.toString();
         }
 
         private static String permuteIt(String binaryinput) {
@@ -191,9 +192,8 @@ public class Decrypter {
                                 30, 6, 26, 20, 10, 1, 8, 14, 25, 3, 4, 29,
                                 11, 19, 32, 12, 22, 7, 5, 27, 15, 21 }; // 21 in correct spot?
                 StringBuilder sb = new StringBuilder(binaryinput.length() + 1);
-                char[] b = binaryinput.toCharArray();
-                for (int i = 0; i < b.length; i++) {
-                        sb.append(b[inverseP[i] - 1]);
+                for (int i = 0; i < binaryinput.length(); i++) {
+                        sb.append(binaryinput.charAt(inverseP[i] - 1));
                         // adds the digit of b located at (the value of p[i] - 1)
                 } // -1 so we don't get array out of bounds error
                 return sb.toString();
@@ -206,19 +206,17 @@ public class Decrypter {
                 // subkey = keyScheduleTransform(subkey); // do this first to create this
                 // iteration's round key
                 String result = rightHalf;
-                // result = permuteIt(result); // round key must be 32
+                result = permuteIt(result); // round key must be 32
                 // result = substitutionS(result);
-                result = xorItUndo(result, subkey.substring(0, 32));
+                // result = xorItUndo(result, subkey.substring(0, 32));
                 // bits
                 return result;
         }
 
         private static String keyScheduleTransform(String inputkey) {
-                String C = splitIt(inputkey)[0]; // had to change this because for whatever reason the old way would
-                                                 // mess up the strings, causing crashes
-                String D = splitIt(inputkey)[1];
-                return C + D; // TODO: Figure out how to make decryption work (not sure if i need to make
-                              // whole new copies of methods that do reverse order or what)
+                String C = shiftIt(splitIt(inputkey)[0]);
+                String D = shiftIt(splitIt(inputkey)[1]);
+                return C + D;
         }
 
         public static String[][] sTable = new String[][] { // the S-Table - TODO: make private later (both this and

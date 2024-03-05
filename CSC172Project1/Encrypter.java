@@ -84,7 +84,7 @@ public class Encrypter {
         for (int i = 0; i < 10; i++) {
 
             // do round function to R
-            inputKey = keyScheduleTransform(inputKey); // do this first to create this
+            // inputKey = keyScheduleTransform(inputKey); // do this first to create this
             // iteration's round key
             R = functionF(R, inputKey); // updated to use the cipher methods within
             // Encrypter, getting rid of
@@ -171,13 +171,15 @@ public class Encrypter {
     }
 
     private static String shiftIt(String binaryinput) {
+        StringBuilder sb = new StringBuilder(binaryinput.length());
         char[] b = binaryinput.toCharArray();
-        char e1 = binaryinput.toCharArray()[0]; // hold 1st element
-        for (int i = 1; i < b.length - 1; i++) {
-            b[i - 1] = b[i]; // shift every element left one
+        char e1 = b[0];
+        for (int i = 1; i < binaryinput.length(); i++) {
+            sb.append(b[i]);
+            System.out.println(sb.length());
         }
-        b[b.length - 1] = e1; // place first element at end to finish shift
-        return b.toString();
+        sb.append(e1);
+        return sb.toString();
     }
 
     private static String permuteIt(String binaryinput) {
@@ -185,9 +187,8 @@ public class Encrypter {
                 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
                 3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
         StringBuilder sb = new StringBuilder(binaryinput.length());
-        char[] b = binaryinput.toCharArray();
-        for (int i = 0; i < b.length; i++) {
-            sb.append(b[p[i] - 1]);
+        for (int i = 0; i < binaryinput.length(); i++) {
+            sb.append(binaryinput.charAt(p[i] - 1));
             // adds the digit of b located at (the value of p[i] - 1)
         } // -1 so we don't get array out of bounds error
         return sb.toString();
@@ -200,22 +201,17 @@ public class Encrypter {
         // TODO: make sure the function works (can't check that until we have decryption
         // lol)
         String result = "";
-        result = xorIt(rightHalf, subkey.substring(0, 32));
+        // result = xorIt(rightHalf, subkey.substring(0, 32));
         // result = substitutionS(rightHalf);
-        // result = permuteIt(rightHalf);
+        result = permuteIt(rightHalf);
         // round key must be 32 bits
         return result;
 
     }
 
     private static String keyScheduleTransform(String inputkey) {
-        // TODO: make this do something
-        // String[] CD = splitIt(inputkey);
-        // String C = shiftIt(CD[0]);
-        // String D = shiftIt(CD[1]);
-        String C = splitIt(inputkey)[0]; // had to change this because for whatever reason the old way would mess up the
-                                         // strings, causing crashes
-        String D = splitIt(inputkey)[1];
+        String C = shiftIt(splitIt(inputkey)[0]);
+        String D = shiftIt(splitIt(inputkey)[1]);
         return C + D;
     }
 
