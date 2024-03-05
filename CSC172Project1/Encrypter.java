@@ -81,23 +81,23 @@ public class Encrypter {
         String R = split[1];
         String temp; // temp variable used to swap L,R halves after each iteration
         // Steps to encrypt a block: Done 10 times to encrypt
-        for (int i = 0; i < 10; i++) {
+        // for (int i = 0; i < 10; i++) {
 
-            // do round function to R
-            // inputKey = keyScheduleTransform(inputKey); // do this first to create this
-            // iteration's round key
-            R = functionF(R, inputKey); // updated to use the cipher methods within
-            // Encrypter, getting rid of
-            // CipherMethods class
+        // do round function to R
+        inputKey = keyScheduleTransform(inputKey); // do this first to create this
+        // iteration's round key
+        R = functionF(R, inputKey); // updated to use the cipher methods within
+        // Encrypter, getting rid of
+        // CipherMethods class
 
-            // make R equal R xOR L
-            R = xorIt(R, L);
+        // make R equal R xOR L
+        R = xorIt(R, L);
 
-            // swap L and R
-            temp = L;
-            L = R;
-            R = temp;
-        }
+        // swap L and R
+        temp = L;
+        L = R;
+        R = temp;
+        // }
 
         // return ecrypted block
         return R + L;
@@ -176,7 +176,6 @@ public class Encrypter {
         char e1 = b[0];
         for (int i = 1; i < binaryinput.length(); i++) {
             sb.append(b[i]);
-            System.out.println(sb.length());
         }
         sb.append(e1);
         return sb.toString();
@@ -201,9 +200,9 @@ public class Encrypter {
         // TODO: make sure the function works (can't check that until we have decryption
         // lol)
         String result = "";
-        // result = xorIt(rightHalf, subkey.substring(0, 32));
+        result = xorIt(rightHalf, subkey.substring(0, 32));
         // result = substitutionS(rightHalf);
-        result = permuteIt(rightHalf);
+        // result = permuteIt(rightHalf);
         // round key must be 32 bits
         return result;
 

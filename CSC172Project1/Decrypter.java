@@ -178,7 +178,6 @@ public class Decrypter {
                 sb.append(b[b.length - 1]);
                 for (int i = 0; i < binaryinput.length() - 1; i++) {
                         sb.append(b[i]);
-                        System.out.println(sb.length());
                 }
                 return sb.toString();
         }
@@ -206,9 +205,9 @@ public class Decrypter {
                 // subkey = keyScheduleTransform(subkey); // do this first to create this
                 // iteration's round key
                 String result = rightHalf;
-                result = permuteIt(result); // round key must be 32
+                // result = permuteIt(result); // round key must be 32
                 // result = substitutionS(result);
-                // result = xorItUndo(result, subkey.substring(0, 32));
+                result = xorItUndo(result, subkey.substring(0, 32));
                 // bits
                 return result;
         }
