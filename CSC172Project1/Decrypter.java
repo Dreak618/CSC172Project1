@@ -79,7 +79,7 @@ public class Decrypter {
                 String temp; // temp variable used to swap L,R halves after each iteration
                 for (int i = 0; i < 10; i++) {
 
-                        R = xorIt(R, L);
+                        R = CipherMethods.xorIt(R, L);
                         R = functionF(R, inputKey);
                         inputKey = keyScheduleTransform(inputKey);
                         temp = L; // swap L, R
@@ -150,19 +150,6 @@ public class Decrypter {
 
         }
 
-        private static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
-                StringBuilder xOr = new StringBuilder(binary1.length());
-                for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
-                        if (binary1.charAt(i) == binary2.charAt(i)) {
-                                xOr.append(0);
-                        } else {
-                                xOr.append(1);
-                        }
-                }
-                return xOr.toString();
-
-        }
-
         private static String shiftIt(String binaryinput) {
                 StringBuilder sb = new StringBuilder(binaryinput.length());
                 char[] b = binaryinput.toCharArray();
@@ -197,7 +184,7 @@ public class Decrypter {
                 result = permuteIt(result); // round key must be 32
                 result = substitutionS(result);
 
-                result = xorIt(result, subkey.substring(0, 32));
+                result = CipherMethods.xorIt(result, subkey.substring(0, 32));
                 // bits
                 return result;
         }

@@ -104,7 +104,7 @@ public class CipherMethods {
                 return split;
         }
 
-        public String xorIt(String binary1, String binary2) { // binary2 is the round key ki
+        public static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
                 StringBuilder xOr = new StringBuilder(binary1.length());
                 for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
                         if (binary1.charAt(i) == binary2.charAt(i)) { // if same value, then XOR is false

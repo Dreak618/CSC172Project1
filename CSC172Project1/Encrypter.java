@@ -92,7 +92,7 @@ public class Encrypter {
             // Encrypter, getting rid of
             // CipherMethods class
             // make R equal R xOR L
-            R = xorIt(R, L);
+            R = CipherMethods.xorIt(R, L);
             System.out.println(L + R + " L+R");
 
         }
@@ -134,18 +134,6 @@ public class Encrypter {
         return result.toString();
     }
 
-    private static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
-        StringBuilder xOr = new StringBuilder(binary1.length());
-        for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
-            if (binary1.charAt(i) == binary2.charAt(i)) { // if same value, then XOR is false
-                xOr.append(0);
-            } else {
-                xOr.append(1); // otherwise XOR is true
-            }
-        }
-        return xOr.toString();
-    }
-
     private static String shiftIt(String binaryinput) {
         StringBuilder sb = new StringBuilder(binaryinput.length());
         char[] b = binaryinput.toCharArray();
@@ -176,7 +164,7 @@ public class Encrypter {
         // TODO: make sure the function works (can't check that until we have decryption
         // lol)
         String result = rightHalf;
-        result = xorIt(rightHalf, subkey.substring(0, 32));
+        result = CipherMethods.xorIt(rightHalf, subkey.substring(0, 32));
         result = substitutionS(result);
         result = permuteIt(result);
         // round key must be 32 bits
