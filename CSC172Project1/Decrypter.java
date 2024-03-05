@@ -14,7 +14,11 @@ public class Decrypter {
                 String outputText = "";
                 createBlocks(inputFilePath);
                 for (String block : Blocks) {
-                        block = binaryToText(decryptBlock(block, inputKey));
+                        System.out.println(block + " pre decrypt  \n");
+                        block = decryptBlock(block, inputKey);
+                        System.out.println(block + " post decrypt \n");
+                        block = binaryToText(block);
+                        System.out.println(block + " to text \n");
                         outputText += block;
                 }
                 writeDecryptedBlocks(outputText, inputFilePath);
@@ -68,7 +72,8 @@ public class Decrypter {
         }
 
         public static String decryptBlock(String block, String inputKey) {
-                String[] split = splitIt(block);
+                System.out.println(block + "pre decrypt binary text");
+                String[] split = CipherMethods.splitIt(block);
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
@@ -90,7 +95,7 @@ public class Decrypter {
         public String binaryToText(String binaryText) {
                 String plainText = "";
                 // chars are in 8 bit chunks and loops until there are no chunks left
-                while (binaryText.length() > 7) {
+                while (binaryText.length() > 0) {
                         // gets current 8 but chunck of binary text
                         String currentChar = binaryText.substring(0, 8);
                         // checks if that chunk of binary text is padding
@@ -102,11 +107,14 @@ public class Decrypter {
                                 // 00000000 it doesn't break everything
                         } else {
                                 // if not, get the character associated with the given binary value
+                                // System.out.println("next char binary " + currentChar);
                                 char nextCharacter = (char) Integer.parseInt(currentChar, 2);
+                                // System.out.println("next char " + nextCharacter);
                                 // adds that character to plain text string
                                 plainText += nextCharacter;
                                 // cut out that character from the binary string
                                 binaryText = binaryText.substring(8);
+
                         }
                 }
                 return plainText;
@@ -140,18 +148,6 @@ public class Decrypter {
                 }
                 return result.toString();
 
-        }
-
-        // split string into 2 equal length strings
-        private static String[] splitIt(String block) {
-                int length = block.length();
-                // break string into 2 equal parts
-                String L = block.substring(0, length / 2);
-                String R = block.substring(length / 2, length);
-                // put 2 parts into array
-                String[] split = { L, R };
-                // return array
-                return split;
         }
 
         private static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
@@ -207,8 +203,8 @@ public class Decrypter {
         }
 
         private static String keyScheduleTransform(String inputkey) {
-                String C = shiftIt(splitIt(inputkey)[0]);
-                String D = shiftIt(splitIt(inputkey)[1]);
+                String C = shiftIt(CipherMethods.splitIt(inputkey)[0]);
+                String D = shiftIt(CipherMethods.splitIt(inputkey)[1]);
                 return C + D;
         }
 

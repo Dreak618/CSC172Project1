@@ -21,21 +21,21 @@ public class ProjectOne {
         // // String inputKey = s.nextLine();
 
         // // rn hardcoded mode and path for texting
-        // String inputFile = "data.txt";
-        // String inputKey = "00000000000000000000000000000000";
+        String inputFile = "data.txt";
+        String inputKey = "00000000000000000000000000000000000000000000000000000000";
 
-        // // System.out.print("Do you want to encrypt or decrypt (E/D): ");
-        // // String ED = s.next();
-        // // rn hardcoded
-        // String ED = "E";
+        // System.out.print("Do you want to encrypt or decrypt (E/D): ");
+        // String ED = s.next();
+        // rn hardcoded
+        String ED = "E";
 
-        // if (ED.equals("E")) {
-        // encryption(inputFile, inputKey);
-        // // for testing
-        // decryption(inputFile + ".encrypted", inputKey);
-        // } else if (ED.equals("D")) {
-        // new Decrypter(inputFile, inputKey);
-        // }
+        if (ED.equals("E")) {
+            encryption(inputFile, inputKey);
+            // for testing
+            decryption(inputFile + ".encrypted", inputKey);
+        } else if (ED.equals("D")) {
+            new Decrypter(inputFile, inputKey);
+        }
         // s.close();
 
     }

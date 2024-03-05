@@ -92,8 +92,8 @@ public class CipherMethods {
                 return result.toString();
         }
 
-        // split string into 2 equal length strings
-        public String[] splitIt(String block) {
+        // split block into 2
+        public static String[] splitIt(String block) {
                 int length = block.length();
                 // break string into 2 equal parts
                 String L = block.substring(0, length / 2);

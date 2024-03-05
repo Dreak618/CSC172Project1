@@ -8,48 +8,55 @@ import java.util.ArrayList;
 //import javax.swing.InputMap;
 
 public class Encrypter {
-    private static ArrayList<String> Blocks = new ArrayList<String>(); // List of blocks
+
     private static int charCount = 0; // used to keep track of how many chars in blocks
-    private static String currentBlock = "";
 
     public Encrypter(String inputFilePath, String inputKey) {
+        ArrayList<String> BlocksPreEncypt = createBlocks(inputFilePath);
+        ArrayList<String> Blocks = new ArrayList<>();
         // take the file and break it into blocks
-        createBlocks(inputFilePath);
         // encrypt the blocks
-        for (String block : Blocks) {
-            block = encryptBlock(block, inputKey);
+        for (String block : BlocksPreEncypt) {
+            Blocks.add(encryptBlock(block, inputKey));
         }
         // write encrypted blocks to file
-        writeBlocks(inputFilePath);
+        writeBlocks(inputFilePath, Blocks);
     }
 
     // takes plain text and breaks it into 64 bit blocks
-    private static void createBlocks(String inputFilePath) {
+    private static ArrayList<String> createBlocks(String inputFilePath) {
+        ArrayList<String> Blocks = new ArrayList<String>();
         // Create a buffered file reader
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
-            String line;
+            String binaryLine = "";
+            String line = "";
             // Takes every line in the file and converts the plain-text into 64bit binary
             // blocks
             while ((line = reader.readLine()) != null) {
-                lineToBinary(line);
+                binaryLine += lineToBinary(line);
             }
             // Pad final block with 0s if not full
             if (charCount % 8 != 0) {
                 while (charCount % 8 != 0) {
                     charCount++;
-                    currentBlock += "00000000";
+                    binaryLine += "00000000";
                 }
-                Blocks.add(currentBlock);
+            }
+            while (binaryLine.length() > 0) {
+                Blocks.add(binaryLine.substring(0, 64));
+                binaryLine = binaryLine.substring(64);
             }
             reader.close();
         } catch (IOException e) {
             System.out.println("Error reading file while encrypting");
         }
+        return Blocks;
     }
 
     // convert chars in line to 8 bit binary strings
-    private static void lineToBinary(String line) {
+    private static String lineToBinary(String line) {
         // Loops through all chars in line
+        String binary = "";
         for (int i = 0; i < line.length(); i++) {
             // increase the count of chars written, used to keeping track of block size
             charCount++;
@@ -60,29 +67,21 @@ public class Encrypter {
             while (currentCharBinary.length() < 8) {
                 currentCharBinary = "0" + currentCharBinary;
             }
-
-            // adds the binary value of that char to current block
-            currentBlock += currentCharBinary;
-
-            // checks if there are 8 chars in the current block, if there are adds it to the
-            // list of blocks and starts a new block
-            if (charCount % 8 == 0 && charCount != 0) {
-                Blocks.add(currentBlock);
-                currentBlock = "";
-            }
+            binary += currentCharBinary;
         }
+        return binary;
     }
 
     // encyrpts 1 block at a time
     public static String encryptBlock(String block, String inputKey) {
         // Split Block into 2 32 bit strings
-        String[] split = splitIt(block);
+        String[] split = CipherMethods.splitIt(block);
         String L = split[0];
         String R = split[1];
         String temp; // temp variable used to swap L,R halves after each iteration
         // Steps to encrypt a block: Done 10 times to encrypt
         for (int i = 0; i < 10; i++) {
-            // swap L and R
+            // // swap L and R
             temp = L;
             L = R;
             R = temp;
@@ -92,9 +91,9 @@ public class Encrypter {
             R = functionF(R, inputKey); // updated to use the cipher methods within
             // Encrypter, getting rid of
             // CipherMethods class
-
             // make R equal R xOR L
             R = xorIt(R, L);
+            System.out.println(L + R + " L+R");
 
         }
 
@@ -104,7 +103,7 @@ public class Encrypter {
     }
 
     // writes blocks to file
-    private static void writeBlocks(String inputFilePath) {
+    private static void writeBlocks(String inputFilePath, ArrayList<String> Blocks) {
         // Create a file for encrypted text
         File encryptedFile = new File(inputFilePath + ".encrypted");
         String encryptPath = encryptedFile.getAbsolutePath();
@@ -121,7 +120,6 @@ public class Encrypter {
 
     private static String substitutionS(String binaryInput) {
         int l = binaryInput.length();
-        System.out.println(l + " length" + (3 * l / 4));
 
         StringBuilder result = new StringBuilder(binaryInput.length());
         String s1 = binaryInput.substring(0, l / 4), s2 = binaryInput.substring(l / 4, l / 2),
@@ -134,17 +132,6 @@ public class Encrypter {
             result.append(sTable[row][column]);
         }
         return result.toString();
-    }
-
-    // split string into 2 equal length strings
-    private static String[] splitIt(String block) {
-        // break string into 2 equal parts
-        String L = block.substring(0, block.length() / 2);
-        String R = block.substring(block.length() / 2);
-        // put 2 parts into array
-        String[] split = { L, R };
-        // return array
-        return split;
     }
 
     private static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
@@ -198,8 +185,8 @@ public class Encrypter {
     }
 
     private static String keyScheduleTransform(String inputkey) {
-        String C = shiftIt(splitIt(inputkey)[0]);
-        String D = shiftIt(splitIt(inputkey)[1]);
+        String C = shiftIt(CipherMethods.splitIt(inputkey)[0]);
+        String D = shiftIt(CipherMethods.splitIt(inputkey)[1]);
         return C + D;
     }
 
