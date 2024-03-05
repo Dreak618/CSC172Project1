@@ -12,14 +12,18 @@ public class Encrypter {
     private static int charCount = 0; // used to keep track of how many chars in blocks
 
     public Encrypter(String inputFilePath, String inputKey) {
-        ArrayList<String> BlocksPreEncypt = createBlocks(inputFilePath);
-        ArrayList<String> Blocks = new ArrayList<>();
+        ArrayList<String> Blocks = createBlocks(inputFilePath);
+
         // take the file and break it into blocks
         // encrypt the blocks
-        for (String block : BlocksPreEncypt) {
-            Blocks.add(encryptBlock(block, inputKey));
+
+        // Blocks.forEach(n -> encryptBlock(n, inputKey));
+        // Blocks.forEach(n -> System.out.println(n + "postEncry \n"));
+
+        Blocks.replaceAll(n -> encryptBlock(n, inputKey));
+        for (String s: Blocks){
+            System.out.println(s + "postEncr \n");
         }
-        // write encrypted blocks to file
         writeBlocks(inputFilePath, Blocks);
     }
 
@@ -36,13 +40,13 @@ public class Encrypter {
                 binaryLine += lineToBinary(line);
             }
             // Pad final block with 0s if not full
-            if (charCount % 8 != 0) {
-                while (charCount % 8 != 0) {
-                    charCount++;
-                    binaryLine += "00000000";
-                }
-            }
+            
             while (binaryLine.length() > 0) {
+                if (binaryLine.length() < 64){
+                    while (binaryLine.length() < 64){
+                        binaryLine += "00000000";
+                    }
+                }
                 Blocks.add(binaryLine.substring(0, 64));
                 binaryLine = binaryLine.substring(64);
             }
@@ -93,7 +97,7 @@ public class Encrypter {
             // CipherMethods class
             // make R equal R xOR L
             R = CipherMethods.xorIt(R, L);
-            System.out.println(L + R + " L+R");
+            // System.out.println(L + R + " L+R");
 
         }
 
@@ -111,6 +115,8 @@ public class Encrypter {
         try (FileWriter writer = new FileWriter(encryptPath)) {
             for (String block : Blocks) {
                 writer.write(block + "\n");
+                System.out.println(block + " writing \n");
+                // writer.write(block);
             }
             writer.close();
         } catch (IOException e) {
