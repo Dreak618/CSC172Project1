@@ -80,27 +80,58 @@ public class Decrypter {
                 return Blocks;
         }
 
+        // public static String decryptBlock(String block, String inputKey) {
+        //         String[] split = CipherMethods.splitIt(block);
+        //         String L = split[0];
+        //         String R = split[1];
+        //         String temp; // temp variable used to swap L,R halves after each iteration
+        //         for (int i = 0; i < 10; i++){ // start with key shifted
+        //                 inputKey = Encrypter.keyScheduleTransform(inputKey);
+        //         }
+        //         for (int i = 0; i < 10; i++) {
+
+        //                 R = CipherMethods.xorIt(R, L);
+        //                 R = functionF(R, inputKey);
+        //                 inputKey = keyScheduleTransform(inputKey);
+        //                 temp = L; // swap L, R
+        //                 L = R;
+        //                 R = temp;
+        //         }
+
+        //         return L + R;
+
+        // }
         public static String decryptBlock(String block, String inputKey) {
+                // Split Block into 2 32 bit strings
                 String[] split = CipherMethods.splitIt(block);
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
-                for (int i = 0; i < 10; i++){ // start with key shifted
+                // Steps to encrypt a block: Done 10 times to encrypt
+                for (int i = 0; i < 10; i++){
                         inputKey = Encrypter.keyScheduleTransform(inputKey);
                 }
                 for (int i = 0; i < 10; i++) {
-
-                        R = CipherMethods.xorIt(R, L);
-                        R = functionF(R, inputKey);
-                        inputKey = keyScheduleTransform(inputKey);
-                        temp = L; // swap L, R
-                        L = R;
-                        R = temp;
+                    // // swap L and R
+                    temp = L;
+                    L = R;
+                    R = temp;
+                    // do round function to R
+                    inputKey = keyScheduleTransform(inputKey); // do this first to create this
+                    // iteration's round key
+                    R = functionF(R, inputKey); // updated to use the cipher methods within
+                    // Encrypter, getting rid of
+                    // CipherMethods class
+                    // make R equal R xOR L
+                    R = CipherMethods.xorIt(R, L);
+                    // System.out.println(L + R + " L+R");
+        
                 }
-
+        
+                // return ecrypted block
                 return L + R;
-
-        }
+        
+            }
 
         // converts binary into plain-text
         public static String binaryToText(String binaryText) {
@@ -147,20 +178,35 @@ public class Decrypter {
                 }
         }
 
+        // private static String substitutionS(String binaryInput) {
+        //         int l = binaryInput.length();
+        //         StringBuilder result = new StringBuilder(binaryInput.length());
+        //         String s1 = binaryInput.substring(0, l / 4), s2 = binaryInput.substring(l / 4, l / 2),
+        //                         s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l);
+        //         String[] splits = { s1, s2, s3, s4 };
+        //         for (String s : splits) {
+        //                 int row = Integer.parseInt(s.substring(0, 4), 2);
+        //                 int column = Integer.parseInt(s.substring(4), 2);
+        //                 result.append(inverseSTable[row][column]);
+        //         }
+        //         return result.toString();
+
+        // }
         private static String substitutionS(String binaryInput) {
                 int l = binaryInput.length();
+        
                 StringBuilder result = new StringBuilder(binaryInput.length());
                 String s1 = binaryInput.substring(0, l / 4), s2 = binaryInput.substring(l / 4, l / 2),
-                                s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l);
+                        s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l); // I'm using a
+                                                                                                                // 2d
                 String[] splits = { s1, s2, s3, s4 };
                 for (String s : splits) {
-                        int row = Integer.parseInt(s.substring(0, 4), 2);
-                        int column = Integer.parseInt(s.substring(4), 2);
-                        result.append(inverseSTable[row][column]);
+                    int row = Integer.parseInt(s.substring(0, 4), 2);
+                    int column = Integer.parseInt(s.substring(4, 8), 2);
+                    result.append(inverseSTable[row][column]);
                 }
                 return result.toString();
-
-        }
+            }
 
         private static String shiftIt(String binaryinput) {
                 StringBuilder sb = new StringBuilder(binaryinput.length());
@@ -172,34 +218,59 @@ public class Decrypter {
                 return sb.toString();
         }
 
+        // private static String permuteIt(String binaryinput) {
+        //         int[] p = { 16, 7, 20, 21, 29, 12, 28, 17, 1, 15,
+        //                         23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
+        //                         3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
+
+        //         int[] inverseP = { 9, 17, 23, 31, 13, 28, 2, 18, 24, 16,
+        //                         30, 6, 26, 20, 10, 1, 8, 14, 25, 3, 4, 29,
+        //                         11, 19, 32, 12, 22, 7, 5, 27, 15, 21 }; // 21 in correct spot?
+        //         StringBuilder sb = new StringBuilder(binaryinput.length() + 1);
+        //         for (int i = 0; i < binaryinput.length(); i++) {
+        //                 sb.append(binaryinput.charAt(inverseP[i] - 1));
+        //                 // adds the digit of b located at (the value of p[i] - 1)
+        //         } // -1 so we don't get array out of bounds error
+        //         return sb.toString();
+        // }
         private static String permuteIt(String binaryinput) {
                 int[] p = { 16, 7, 20, 21, 29, 12, 28, 17, 1, 15,
-                                23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
-                                3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
-
-                int[] inverseP = { 9, 17, 23, 31, 13, 28, 2, 18, 24, 16,
-                                30, 6, 26, 20, 10, 1, 8, 14, 25, 3, 4, 29,
-                                11, 19, 32, 12, 22, 7, 5, 27, 15, 21 }; // 21 in correct spot?
-                StringBuilder sb = new StringBuilder(binaryinput.length() + 1);
+                        23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
+                        3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
+                StringBuilder sb = new StringBuilder(binaryinput.length());
                 for (int i = 0; i < binaryinput.length(); i++) {
-                        sb.append(binaryinput.charAt(inverseP[i] - 1));
-                        // adds the digit of b located at (the value of p[i] - 1)
+                    sb.append(binaryinput.charAt(p[i] - 1));
+                    // adds the digit of b located at (the value of p[i] - 1)
                 } // -1 so we don't get array out of bounds error
                 return sb.toString();
-        }
+            }
 
+        // private static String functionF(String rightHalf, String subkey) {
+
+        //         // iteration's round key
+        //         String result = rightHalf;
+
+        //         result = permuteIt(result); // round key must be 32
+        //         result = substitutionS(result);
+
+        //         result = CipherMethods.xorIt(result, subkey.substring(0, 32));
+        //         // bits
+        //         return result;
+        // }
         private static String functionF(String rightHalf, String subkey) {
-
-                // iteration's round key
+                // round function: XORs right Half with subkey, then splits it into 4 8-bit
+                // pieces, does lookup in s-table for each, then concatenates those, permutes
+                // using P
+                // TODO: make sure the function works (can't check that until we have decryption
+                // lol)
                 String result = rightHalf;
-
-                result = permuteIt(result); // round key must be 32
+                result = CipherMethods.xorIt(rightHalf, subkey.substring(0, 32));
                 result = substitutionS(result);
-
-                result = CipherMethods.xorIt(result, subkey.substring(0, 32));
-                // bits
+                result = permuteIt(result);
+                // round key must be 32 bits
                 return result;
-        }
+        
+            }
 
         private static String keyScheduleTransform(String inputkey) {
                 String C = shiftIt(CipherMethods.splitIt(inputkey)[0]);
