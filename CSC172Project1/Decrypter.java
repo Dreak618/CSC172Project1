@@ -6,17 +6,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Decrypter {
-        private ArrayList<String> Blocks = new ArrayList<String>();
+
         private String currentBlock = "";
 
         public Decrypter(String inputFilePath, String inputKey) {
+                ArrayList<String> Blocks = createBlocks(inputFilePath);
                 // String binaryText = decryptText(inputFilePath); // NYI
                 String outputText = "";
                 createBlocks(inputFilePath);
                 for (String block : Blocks) {
-                        System.out.println(block + " pre decrypt  \n");
+                        System.out.println(block + " pre decrypt");
                         block = decryptBlock(block, inputKey);
-                        System.out.println(block + " post decrypt \n");
+                        System.out.println(block + " post decrypt");
                         block = binaryToText(block);
                         System.out.println(block + " to text \n");
                         outputText += block;
@@ -49,26 +50,34 @@ public class Decrypter {
         // return binaryTest;
         // }
 
-        private void createBlocks(String inputFilePath) {
+        private ArrayList<String> createBlocks(String inputFilePath) {
+                ArrayList<String> Blocks = new ArrayList<String>();
                 // Create a buffered file reader
                 try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
                         String line = "";
+                        String blockLine = "";
                         // Takes every line in the file and converts the plain-text into 64bit binary
                         // blocks
                         while ((line = reader.readLine()) != null) {
-                                for (int i = 0; i < line.length(); i++) {
-                                        currentBlock += line.charAt(i);
-                                        if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
-                                                Blocks.add(currentBlock);
-                                                currentBlock = "";
-                                        }
-                                } // assuming no need to pad in this direction
-
+                                blockLine+=line;
+                                // for (int i = 0; i < line.length(); i++) {
+                                //         currentBlock += line.charAt(i);
+                                //         if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
+                                //                 Blocks.add(currentBlock);
+                                //                 currentBlock = "";
+                                //         }
+                                // } // assuming no need to pad in this direction
                         }
+                        while (blockLine.length() > 0){
+                                Blocks.add(blockLine.substring(0,64));
+                                blockLine = blockLine.substring(64);
+                        }
+
                         reader.close();
                 } catch (IOException e) {
                         System.out.println("Error reading file while encrypting");
                 }
+                return Blocks;
         }
 
         public static String decryptBlock(String block, String inputKey) {
