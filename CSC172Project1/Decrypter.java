@@ -72,7 +72,7 @@ public class Decrypter {
         }
 
         public static String decryptBlock(String block, String inputKey) {
-                System.out.println(block + "pre decrypt binary text");
+                System.out.println(block + " pre decrypt binary text");
                 String[] split = CipherMethods.splitIt(block);
                 String L = split[0];
                 String R = split[1];
@@ -92,7 +92,7 @@ public class Decrypter {
         }
 
         // converts binary into plain-text
-        public String binaryToText(String binaryText) {
+        public static String binaryToText(String binaryText) {
                 String plainText = "";
                 // chars are in 8 bit chunks and loops until there are no chunks left
                 while (binaryText.length() > 0) {
