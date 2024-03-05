@@ -85,6 +85,9 @@ public class Decrypter {
                 String L = split[0];
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
+                for (int i = 0; i < 10; i++){ // start with key shifted
+                        inputKey = Encrypter.keyScheduleTransform(inputKey);
+                }
                 for (int i = 0; i < 10; i++) {
 
                         R = CipherMethods.xorIt(R, L);
@@ -117,6 +120,7 @@ public class Decrypter {
                                 // if not, get the character associated with the given binary value
                                 // System.out.println("next char binary " + currentChar);
                                 char nextCharacter = (char) Integer.parseInt(currentChar, 2);
+                                System.out.println(nextCharacter);
                                 // System.out.println("next char " + nextCharacter);
                                 // adds that character to plain text string
                                 plainText += nextCharacter;

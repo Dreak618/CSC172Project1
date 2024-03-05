@@ -18,9 +18,9 @@ public class Encrypter {
         // encrypt the blocks
 
         // Blocks.forEach(n -> encryptBlock(n, inputKey));
-        // Blocks.forEach(n -> System.out.println(n + "postEncry \n"));
+        // Blocks.forEach(n -> System.out.println(n + "preEncry \n"));
 
-        Blocks.replaceAll(n -> encryptBlock(n, inputKey));
+        Blocks.replaceAll(n -> encryptBlock(n, inputKey)); // encrypts each block invidually, replaces it with output in arraylist
         for (String s: Blocks){
             System.out.println(s + "postEncr \n");
         }
@@ -140,7 +140,7 @@ public class Encrypter {
         return result.toString();
     }
 
-    private static String shiftIt(String binaryinput) {
+    protected static String shiftIt(String binaryinput) {
         StringBuilder sb = new StringBuilder(binaryinput.length());
         char[] b = binaryinput.toCharArray();
         char e1 = b[0];
@@ -178,7 +178,7 @@ public class Encrypter {
 
     }
 
-    private static String keyScheduleTransform(String inputkey) {
+    public static String keyScheduleTransform(String inputkey) {
         String C = shiftIt(CipherMethods.splitIt(inputkey)[0]);
         String D = shiftIt(CipherMethods.splitIt(inputkey)[1]);
         return C + D;

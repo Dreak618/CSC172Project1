@@ -9,7 +9,7 @@ public class ProjectOne {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
-        new ProjectOne();
+        // new ProjectOne();
 
         // runTests();
         // Scanner s = new Scanner(System.in);
@@ -32,7 +32,7 @@ public class ProjectOne {
         if (ED.equals("E")) {
             encryption(inputFile, inputKey);
             // for testing
-            decryption(inputFile + ".encrypted", inputKey);
+            decryption(inputFile, inputKey);
         } else if (ED.equals("D")) {
             new Decrypter(inputFile, inputKey);
         }
@@ -64,7 +64,7 @@ public class ProjectOne {
         System.out.println(" decrypted ");
         splitIt(decrypt);
         System.out.println("matching: " + (string.equals(decrypt)));
-        System.out.println("Output for: decryption (all ones, all ones)");
+        
     }
 
     public void splitIt(String s) {
@@ -79,7 +79,7 @@ public class ProjectOne {
     }
 
     public static void decryption(String inputFilePath, String inputKey) {
-        new Decrypter(inputFilePath, inputKey);
+        new Decrypter(inputFilePath + ".encrypted", inputKey);
     }
 
     public static void runTests() {
