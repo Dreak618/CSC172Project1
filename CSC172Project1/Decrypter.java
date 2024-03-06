@@ -60,7 +60,7 @@ public class Decrypter {
                         // blocks
                         while ((line = reader.readLine()) != null) {
                                 blockLine += line;
-                                blockLine += line;
+
                                 // for (int i = 0; i < line.length(); i++) {
                                 // currentBlock += line.charAt(i);
                                 // if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
