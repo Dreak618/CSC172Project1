@@ -29,15 +29,15 @@ public class ProjectOne {
         s.close();
     }
 
-    public static void encryption(String inputFilePath, String inputKey) {
+    private static void encryption(String inputFilePath, String inputKey) {
         new CipherMethods.Encrypter(inputFilePath, inputKey);
     }
 
-    public static void decryption(String inputFilePath, String inputKey) {
+    private static void decryption(String inputFilePath, String inputKey) {
         new CipherMethods.Decrypter(inputFilePath, inputKey);
     }
 
-    public static void runTests() {
+    private static void runTests() {
         String allOnes = "1111111111111111111111111111111111111111111111111111111111111111"; // 64 bit
         String allOnesKey = "11111111111111111111111111111111111111111111111111111111"; // 56 bit
         String allZeros = "0000000000000000000000000000000000000000000000000000000000000000"; // 64 bit
