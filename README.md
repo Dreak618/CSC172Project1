@@ -1,18 +1,16 @@
-## Getting Started
+# CSC172Project1
+UR CSC 172 Project #1
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
 
-## Folder Structure
+Order of tasks:
+Encryption:
+ Read the file (plaintext)
+ Convert to binary (using given algorithm and user secret key)
+ Encrypt the data
+ Write encrypted binary to file
 
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Decryption:
+ Read the file (binary)
+ Decrypt the data (using given algorithm and user secret key)
+ Convert to plaintext characters
+ Write decrypted plaintext to a new file
