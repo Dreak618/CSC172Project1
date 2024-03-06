@@ -27,15 +27,14 @@ public class ProjectOne {
             decryption(inputFile, inputKey);
         }
         s.close();
-
     }
 
     public static void encryption(String inputFilePath, String inputKey) {
-        new Encrypter(inputFilePath, inputKey);
+        new CipherMethods.Encrypter(inputFilePath, inputKey);
     }
 
     public static void decryption(String inputFilePath, String inputKey) {
-        new Decrypter(inputFilePath, inputKey);
+        new CipherMethods.Decrypter(inputFilePath, inputKey);
     }
 
     public static void runTests() {
@@ -49,31 +48,30 @@ public class ProjectOne {
 
         System.out.println("Running Tests:");
         System.out.println("Output for: encryption (all ones, all ones)");
-        System.out.println(Encrypter.encryptBlock(allOnes, allOnesKey));
+        System.out.println(CipherMethods.Encrypter.encryptBlock(allOnes, allOnesKey));
 
         System.out.println("Output for: encryption (all zeros, all ones)");
-        System.out.println(Encrypter.encryptBlock(allZeros, allOnesKey));
+        System.out.println(CipherMethods.Encrypter.encryptBlock(allZeros, allOnesKey));
 
         System.out.println("Output for: encryption (all zeros, all zeros)");
-        System.out.println(Encrypter.encryptBlock(allZeros, allZerosKey));
+        System.out.println(CipherMethods.Encrypter.encryptBlock(allZeros, allZerosKey));
 
         System.out.println("Output for: encryption (block, all zeros), where: \n block = " + block1);
-        System.out.println(Encrypter.encryptBlock(block1, allZerosKey));
+        System.out.println(CipherMethods.Encrypter.encryptBlock(block1, allZerosKey));
 
         System.out.println("Output for: decryption (all ones, all ones)");
-        System.out.println(Decrypter.decryptBlock(allOnes, allOnesKey));
+        System.out.println(CipherMethods.Decrypter.decryptBlock(allOnes, allOnesKey));
 
         System.out.println("Output for: decryption(all zeros, all ones)");
-        System.out.println(Decrypter.decryptBlock(allZeros, allOnesKey));
+        System.out.println(CipherMethods.Decrypter.decryptBlock(allZeros, allOnesKey));
 
         System.out.println("Output for: decryption(all zeros, all zeros)");
-        System.out.println(Decrypter.decryptBlock(allZeros, allZerosKey));
+        System.out.println(CipherMethods.Decrypter.decryptBlock(allZeros, allZerosKey));
 
         System.out.println("Output for: decryption(block, all ones), where: \n block = " + block2);
-        System.out.println(Decrypter.decryptBlock(block2, allOnesKey));
+        System.out.println(CipherMethods.Decrypter.decryptBlock(block2, allOnesKey));
 
         System.out.println("Output for decryption(block, all zeros), where: \n block = " + block3);
-        System.out.println(Decrypter.decryptBlock(block3, allZerosKey));
-
+        System.out.println(CipherMethods.Decrypter.decryptBlock(block3, allZerosKey));
     }
 }
