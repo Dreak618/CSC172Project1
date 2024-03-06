@@ -60,7 +60,13 @@ public class Decrypter {
                         // blocks
                         while ((line = reader.readLine()) != null) {
                                 blockLine += line;
+                                blockLine += line;
                                 // for (int i = 0; i < line.length(); i++) {
+                                // currentBlock += line.charAt(i);
+                                // if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
+                                // Blocks.add(currentBlock);
+                                // currentBlock = "";
+                                // }
                                 // currentBlock += line.charAt(i);
                                 // if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
                                 // Blocks.add(currentBlock);
@@ -68,8 +74,8 @@ public class Decrypter {
                                 // }
                                 // } // assuming no need to pad in this direction
                         }
-                        while (blockLine.length() > 0) {
-                                Blocks.add(blockLine.substring(0, 64));
+                        while (blockLine.length() > 0)  {
+                                Blocks.add(blockLine.substring(0,  64));
                                 blockLine = blockLine.substring(64);
                         }
 
@@ -118,10 +124,11 @@ public class Decrypter {
                                 if (binaryText.length() > 7) { // so it doesnt break if last char is "00000000"
                                         binaryText = binaryText.substring(8);
                                 }
-                                // 00000000 it doesn't break everything
-                        } else if (currentChar.equals("11111111")){
-                                        plainText = plainText + "\n";
-                                        binaryText = binaryText.substring(8);
+                        } else if (currentChar.equals("11111111")) {
+                                // if read new line marker add new line
+                                plainText = plainText + "\n";
+                                binaryText = binaryText.substring(8);
+
                         } else {
                                 // if not, get the character associated with the given binary value
                                 // System.out.println("next char binary " + currentChar);
