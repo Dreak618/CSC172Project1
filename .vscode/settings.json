@@ -1,6 +1,5 @@
 {
     "java.project.sourcePaths": [
-        "CSC172Project1",
         "src"
     ],
     "java.project.outputPath": "bin",
