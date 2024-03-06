@@ -21,7 +21,7 @@ public class Encrypter {
         // Blocks.forEach(n -> System.out.println(n + "postEncry \n"));
 
         Blocks.replaceAll(n -> encryptBlock(n, inputKey));
-        for (String s: Blocks){
+        for (String s : Blocks) {
             System.out.println(s + "postEncr \n");
         }
         writeBlocks(inputFilePath, Blocks);
@@ -38,12 +38,14 @@ public class Encrypter {
             // blocks
             while ((line = reader.readLine()) != null) {
                 binaryLine += lineToBinary(line);
+
+                binaryLine += "11111111";
             }
             // Pad final block with 0s if not full
-            
+
             while (binaryLine.length() > 0) {
-                if (binaryLine.length() < 64){
-                    while (binaryLine.length() < 64){
+                if (binaryLine.length() < 64) {
+                    while (binaryLine.length() < 64) {
                         binaryLine += "00000000";
                     }
                 }
