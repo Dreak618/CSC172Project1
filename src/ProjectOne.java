@@ -24,7 +24,7 @@ public class ProjectOne {
         if (ED.equals("E")) {
             encryption(inputFile, inputKey);
         } else if (ED.equals("D")) {
-            new Decrypter(inputFile, inputKey);
+            decryption(inputFile, inputKey);
         }
         s.close();
 

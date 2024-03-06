@@ -5,8 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-//import javax.swing.InputMap;
-
 public class Encrypter {
 
     public Encrypter(String inputFilePath, String inputKey) {

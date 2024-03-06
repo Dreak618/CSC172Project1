@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 public class Decrypter {
 
-        private String currentBlock = "";
-
         public Decrypter(String inputFilePath, String inputKey) {
                 ArrayList<String> Blocks = createBlocks(inputFilePath);
                 // String binaryText = decryptText(inputFilePath); // NYI
