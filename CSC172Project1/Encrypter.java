@@ -38,6 +38,7 @@ public class Encrypter {
             // blocks
             while ((line = reader.readLine()) != null) {
                 binaryLine += lineToBinary(line);
+                binaryLine += "11111111";
             }
             // Pad final block with 0s if not full
 

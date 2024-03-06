@@ -119,6 +119,9 @@ public class Decrypter {
                                         binaryText = binaryText.substring(8);
                                 }
                                 // 00000000 it doesn't break everything
+                        } else if (currentChar.equals("11111111")){
+                                        plainText = plainText + "\n";
+                                        binaryText = binaryText.substring(8);
                         } else {
                                 // if not, get the character associated with the given binary value
                                 // System.out.println("next char binary " + currentChar);
