@@ -13,15 +13,11 @@ public class Decrypter {
                 String outputText = "";
                 createBlocks(inputFilePath);
                 for (String block : Blocks) {
-                        System.out.println(block + " pre decrypt");
                         block = decryptBlock(block, inputKey);
-                        System.out.println(block + " post decrypt");
                         block = binaryToText(block);
-                        System.out.println(block + " to text \n");
                         outputText += block;
                 }
                 writeDecryptedBlocks(outputText, inputFilePath);
-
                 // Convert the decrypted binary into text
                 // Write decrypted binary to file
         }
@@ -36,19 +32,6 @@ public class Decrypter {
                         // blocks
                         while ((line = reader.readLine()) != null) {
                                 blockLine += line;
-
-                                // for (int i = 0; i < line.length(); i++) {
-                                // currentBlock += line.charAt(i);
-                                // if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
-                                // Blocks.add(currentBlock);
-                                // currentBlock = "";
-                                // }
-                                // currentBlock += line.charAt(i);
-                                // if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
-                                // Blocks.add(currentBlock);
-                                // currentBlock = "";
-                                // }
-                                // } // assuming no need to pad in this direction
                         }
                         while (blockLine.length() > 0) {
                                 Blocks.add(blockLine.substring(0, 64));
@@ -74,17 +57,11 @@ public class Decrypter {
                         temp = L; // swap L, R
                         L = R;
                         R = temp;
-                        // R = functionF(CipherMethods.xorIt(R, L), inputKey.substring(0,32));
 
                         L = CipherMethods.xorIt(Encrypter.functionF(R, inputKey.substring(0, 32)), L);
                         inputKey = keyScheduleTransform(inputKey);
-                        // R = CipherMethods.xorIt(R, L);
-                        // R = functionF(R, inputKey);
-
                 }
-
                 return L + R;
-
         }
 
         // converts binary into plain-text
@@ -107,14 +84,11 @@ public class Decrypter {
 
                         } else {
                                 // if not, get the character associated with the given binary value
-                                // System.out.println("next char binary " + currentChar);
                                 char nextCharacter = (char) Integer.parseInt(currentChar, 2);
-                                // System.out.println("next char " + nextCharacter);
                                 // adds that character to plain text string
                                 plainText += nextCharacter;
                                 // cut out that character from the binary string
                                 binaryText = binaryText.substring(8);
-
                         }
                 }
                 return plainText;
@@ -176,18 +150,10 @@ public class Decrypter {
         }
 
         private static String functionF(String binaryInput, String subkey) {
-
-                // iteration's round key
-                // String result = rightHalf;
-
-                // result = permuteIt(result); // round key must be 32
+                // String result = permuteIt(binaryInput);
                 // result = substitutionS(result);
-
-                // result = CipherMethods.xorIt(result, subkey.substring(0, 32));
-                // // bits
+                // result = CipherMethods.xorIt(result, subkey.substring(0,32));
                 String result = CipherMethods.xorIt(substitutionS(permuteIt(binaryInput)), subkey.substring(0, 32));
-                // String result = permuteIt(substitutionS(CipherMethods.xorIt(binaryInput,
-                // subkey)));
                 return result;
         }
 
