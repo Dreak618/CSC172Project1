@@ -21,7 +21,7 @@ public class Encrypter {
         // Blocks.forEach(n -> System.out.println(n + "postEncry \n"));
 
         Blocks.replaceAll(n -> encryptBlock(n, inputKey));
-        for (String s: Blocks){
+        for (String s : Blocks) {
             System.out.println(s + "postEncr \n");
         }
         writeBlocks(inputFilePath, Blocks);
@@ -40,10 +40,10 @@ public class Encrypter {
                 binaryLine += lineToBinary(line);
             }
             // Pad final block with 0s if not full
-            
+
             while (binaryLine.length() > 0) {
-                if (binaryLine.length() < 64){
-                    while (binaryLine.length() < 64){
+                if (binaryLine.length() < 64) {
+                    while (binaryLine.length() < 64) {
                         binaryLine += "00000000";
                     }
                 }
@@ -59,6 +59,7 @@ public class Encrypter {
 
     // convert chars in line to 8 bit binary strings
     private static String lineToBinary(String line) {
+        ArrayList<String> binaries = new ArrayList<>(line.length() / 8);
         // Loops through all chars in line
         String binary = "";
         for (int i = 0; i < line.length(); i++) {
@@ -72,7 +73,10 @@ public class Encrypter {
                 currentCharBinary = "0" + currentCharBinary;
             }
             binary += currentCharBinary;
+            binaries.add(binary);
         }
+        Decrypter.writeDecryptedBlocks(binary, "binarydata.txt");
+
         return binary;
     }
 
@@ -84,21 +88,24 @@ public class Encrypter {
         String R = split[1];
         String temp; // temp variable used to swap L,R halves after each iteration
         // Steps to encrypt a block: Done 10 times to encrypt
+        String swap;
         for (int i = 0; i < 10; i++) {
             // // swap L and R
-            temp = L;
-            L = R;
-            R = temp;
             // do round function to R
             inputKey = keyScheduleTransform(inputKey); // do this first to create this
             // iteration's round key
-            R = functionF(R, inputKey); // updated to use the cipher methods within
-            // Encrypter, getting rid of
-            // CipherMethods class
-            // make R equal R xOR L
-            R = CipherMethods.xorIt(R, L);
+            // R = functionF(R, inputKey.substring(0,32)); // updated to use the cipher
+            // methods within
+            // // Encrypter, getting rid of
+            // // CipherMethods class
+            // // make R equal R xOR L
+            // R = CipherMethods.xorIt(R, L);
+            L = CipherMethods.xorIt(functionF(R, inputKey.substring(0, 32)), L);
             // System.out.println(L + R + " L+R");
 
+            temp = L;
+            L = R;
+            R = temp;
         }
 
         // return ecrypted block
@@ -129,8 +136,7 @@ public class Encrypter {
 
         StringBuilder result = new StringBuilder(binaryInput.length());
         String s1 = binaryInput.substring(0, l / 4), s2 = binaryInput.substring(l / 4, l / 2),
-                s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l); // I'm using a
-                                                                                                        // 2d
+                s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l);                                                                    
         String[] splits = { s1, s2, s3, s4 };
         for (String s : splits) {
             int row = Integer.parseInt(s.substring(0, 4), 2);
@@ -142,10 +148,9 @@ public class Encrypter {
 
     private static String shiftIt(String binaryinput) {
         StringBuilder sb = new StringBuilder(binaryinput.length());
-        char[] b = binaryinput.toCharArray();
-        char e1 = b[0];
+        char e1 = binaryinput.charAt(0);
         for (int i = 1; i < binaryinput.length(); i++) {
-            sb.append(b[i]);
+            sb.append(binaryinput.charAt(i));
         }
         sb.append(e1);
         return sb.toString();
@@ -163,7 +168,7 @@ public class Encrypter {
         return sb.toString();
     }
 
-    private static String functionF(String rightHalf, String subkey) {
+    protected static String functionF(String rightHalf, String subkey) {
         // round function: XORs right Half with subkey, then splits it into 4 8-bit
         // pieces, does lookup in s-table for each, then concatenates those, permutes
         // using P
@@ -178,7 +183,7 @@ public class Encrypter {
 
     }
 
-    private static String keyScheduleTransform(String inputkey) {
+    public static String keyScheduleTransform(String inputkey) {
         String C = shiftIt(CipherMethods.splitIt(inputkey)[0]);
         String D = shiftIt(CipherMethods.splitIt(inputkey)[1]);
         return C + D;

@@ -9,9 +9,9 @@ public class ProjectOne {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
-        new ProjectOne();
+        // new ProjectOne();
 
-        // runTests();
+        runTests();
         // Scanner s = new Scanner(System.in);
 
         // // get file path and key
@@ -22,11 +22,11 @@ public class ProjectOne {
 
         // // rn hardcoded mode and path for texting
         String inputFile = "data.txt";
-        String inputKey = "00000000000000000000000000000000000000000000000000000000";
+        String inputKey = "00011101010011010110100010101011010010110100011100100101";
 
-        // System.out.print("Do you want to encrypt or decrypt (E/D): ");
-        // String ED = s.next();
-        // rn hardcoded
+        // // System.out.print("Do you want to encrypt or decrypt (E/D): ");
+        // // String ED = s.next();
+        // // rn hardcoded
         String ED = "E";
 
         if (ED.equals("E")) {
@@ -36,7 +36,7 @@ public class ProjectOne {
         } else if (ED.equals("D")) {
             new Decrypter(inputFile, inputKey);
         }
-        // s.close();
+        // // s.close();
 
     }
 
@@ -64,7 +64,7 @@ public class ProjectOne {
         System.out.println(" decrypted ");
         splitIt(decrypt);
         System.out.println("matching: " + (string.equals(decrypt)));
-        System.out.println("Output for: decryption (all ones, all ones)");
+        // System.out.println("Output for: decryption (all ones, all ones)");
     }
 
     public void splitIt(String s) {
@@ -100,30 +100,48 @@ public class ProjectOne {
         System.out.println("Running Tests:");
         System.out.println("Output for: encryption (all ones, all ones)");
         System.out.println(Encrypter.encryptBlock(allOnes, allOnesKey));
+        System.out.println("Should be:");
+        System.out.println("0101011010001110111001000111100001001110010001100110000011110101");
 
         System.out.println("Output for: encryption (all zeros, all ones)");
         System.out.println(Encrypter.encryptBlock(allZeros, allOnesKey));
+        System.out.println("Should be:");
+        System.out.println("1100111010001000100011011010110110110010100101011001100000101000");
 
         System.out.println("Output for: encryption (all zeros, all zeros)");
         System.out.println(Encrypter.encryptBlock(allZeros, allZerosKey));
+        System.out.println("Should be:");
+        System.out.println("1010100101110001000110111000011110110001101110011001111100001010");
 
         System.out.println("Output for: encryption (block, all zeros), where: \n block = " + block);
         System.out.println(Encrypter.encryptBlock(block, allZerosKey));
+        System.out.println("Should be:");
+        System.out.println("0010101110011011010001010111000010110110101011111010000101100101");
 
         System.out.println("Output for: decryption (all ones, all ones)");
         System.out.println(Decrypter.decryptBlock(allOnes, allOnesKey));
+        System.out.println("Should be:");
+        System.out.println("0100111001000110011000001111010101010110100011101110010001111000");
 
         System.out.println("Output for: decryption(all zeros, all ones)");
         System.out.println(Decrypter.decryptBlock(allZeros, allOnesKey));
+        System.out.println("Should be:");
+        System.out.println("1011001010010101100110000010100011001110100010001000110110101101");
 
         System.out.println("Output for: decryption(all zeros, all zeros)");
         System.out.println(Decrypter.decryptBlock(allZeros, allZerosKey));
+        System.out.println("Should be:");
+        System.out.println("1011000110111001100111110000101010101001011100010001101110000111");
 
         System.out.println("Output for: decryption(block, all ones), where: \n block = " + block2);
         System.out.println(Decrypter.decryptBlock(block2, allOnesKey));
+        System.out.println("Should be:");
+        System.out.println("1111111111111111111111111111111111111111111111111111111111111111");
 
         System.out.println("Output for decryption(block, all zeros), where: \n block = " + block3);
         System.out.println(Decrypter.decryptBlock(block3, allZerosKey));
+        System.out.println("Should be:");
+        System.out.println("1111111111111111111111111111111111111111111111111111111111111111");
 
     }
 }

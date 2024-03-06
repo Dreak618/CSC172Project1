@@ -59,17 +59,17 @@ public class Decrypter {
                         // Takes every line in the file and converts the plain-text into 64bit binary
                         // blocks
                         while ((line = reader.readLine()) != null) {
-                                blockLine+=line;
+                                blockLine += line;
                                 // for (int i = 0; i < line.length(); i++) {
-                                //         currentBlock += line.charAt(i);
-                                //         if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
-                                //                 Blocks.add(currentBlock);
-                                //                 currentBlock = "";
-                                //         }
+                                // currentBlock += line.charAt(i);
+                                // if (currentBlock.length() % 64 == 0 && currentBlock.length() != 0) {
+                                // Blocks.add(currentBlock);
+                                // currentBlock = "";
+                                // }
                                 // } // assuming no need to pad in this direction
                         }
-                        while (blockLine.length() > 0){
-                                Blocks.add(blockLine.substring(0,64));
+                        while (blockLine.length() > 0) {
+                                Blocks.add(blockLine.substring(0, 64));
                                 blockLine = blockLine.substring(64);
                         }
 
@@ -86,13 +86,19 @@ public class Decrypter {
                 String R = split[1];
                 String temp; // temp variable used to swap L,R halves after each iteration
                 for (int i = 0; i < 10; i++) {
-
-                        R = CipherMethods.xorIt(R, L);
-                        R = functionF(R, inputKey);
-                        inputKey = keyScheduleTransform(inputKey);
+                        inputKey = Encrypter.keyScheduleTransform(inputKey);
+                }
+                for (int i = 0; i < 10; i++) {
                         temp = L; // swap L, R
                         L = R;
                         R = temp;
+                        // R = functionF(CipherMethods.xorIt(R, L), inputKey.substring(0,32));
+
+                        L = CipherMethods.xorIt(Encrypter.functionF(R, inputKey.substring(0, 32)), L);
+                        inputKey = keyScheduleTransform(inputKey);
+                        // R = CipherMethods.xorIt(R, L);
+                        // R = functionF(R, inputKey);
+
                 }
 
                 return L + R;
@@ -113,7 +119,7 @@ public class Decrypter {
                                         binaryText = binaryText.substring(8);
                                 }
                                 // 00000000 it doesn't break everything
-                        } else  {
+                        } else {
                                 // if not, get the character associated with the given binary value
                                 // System.out.println("next char binary " + currentChar);
                                 char nextCharacter = (char) Integer.parseInt(currentChar, 2);
@@ -129,7 +135,7 @@ public class Decrypter {
         }
 
         // write decrypted text to a new file
-        private void writeDecryptedBlocks(String text, String inputFilePath) {
+        public static void writeDecryptedBlocks(String text, String inputFilePath) {
                 // create file for decrypted text
                 File decryptedFile = new File(inputFilePath + ".decrypted");
                 String decryptPath = decryptedFile.getAbsolutePath();
@@ -152,7 +158,7 @@ public class Decrypter {
                 for (String s : splits) {
                         int row = Integer.parseInt(s.substring(0, 4), 2);
                         int column = Integer.parseInt(s.substring(4), 2);
-                        result.append(inverseSTable[row][column]);
+                        result.append(sTable[row][column]);
                 }
                 return result.toString();
 
@@ -160,10 +166,9 @@ public class Decrypter {
 
         private static String shiftIt(String binaryinput) {
                 StringBuilder sb = new StringBuilder(binaryinput.length());
-                char[] b = binaryinput.toCharArray();
-                sb.append(b[b.length - 1]);
+                sb.append(binaryinput.charAt(binaryinput.length() - 1));
                 for (int i = 0; i < binaryinput.length() - 1; i++) {
-                        sb.append(b[i]);
+                        sb.append(binaryinput.charAt(i));
                 }
                 return sb.toString();
         }
@@ -184,16 +189,18 @@ public class Decrypter {
                 return sb.toString();
         }
 
-        private static String functionF(String rightHalf, String subkey) {
+        private static String functionF(String binaryInput, String subkey) {
 
                 // iteration's round key
-                String result = rightHalf;
+                // String result = rightHalf;
 
-                result = permuteIt(result); // round key must be 32
-                result = substitutionS(result);
+                // result = permuteIt(result); // round key must be 32
+                // result = substitutionS(result);
 
-                result = CipherMethods.xorIt(result, subkey.substring(0, 32));
-                // bits
+                // result = CipherMethods.xorIt(result, subkey.substring(0, 32));
+                // // bits
+                String result = CipherMethods.xorIt(substitutionS(permuteIt(binaryInput)), subkey.substring(0,32));
+                // String result = permuteIt(substitutionS(CipherMethods.xorIt(binaryInput, subkey)));
                 return result;
         }
 
