@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-// REMEBER TO REMOVE PACKAGES BEFORE SUBMISSION
 public class ProjectOne {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
@@ -12,16 +11,15 @@ public class ProjectOne {
         runTests(); // run test cases
         Scanner s = new Scanner(System.in);
 
-        // get file path and key from user using scanner
+        // get file path, desired mode, and key from user using scanner
         System.out.print("Enter File Name: ");
         String inputFile = s.nextLine();
         System.out.println("enter key");
         String inputKey = s.nextLine();
-
         System.out.print("Do you want to encrypt or decrypt (E/D): ");
         String ED = s.next();
 
-        if (ED.equals("E")) {
+        if (ED.equals("E")) { // runs method to encrypt/decrypt based on user input
             encryption(inputFile, inputKey);
         } else if (ED.equals("D")) {
             decryption(inputFile, inputKey);
@@ -29,6 +27,8 @@ public class ProjectOne {
         s.close();
     }
 
+    // creates a new instance of an encrypter or decrypter to encrypt/decrypt the
+    // given file
     private static void encryption(String inputFilePath, String inputKey) {
         new CipherMethods.Encrypter(inputFilePath, inputKey);
     }
@@ -37,7 +37,7 @@ public class ProjectOne {
         new CipherMethods.Decrypter(inputFilePath, inputKey);
     }
 
-    private static void runTests() {
+    private static void runTests() { // test cases -- variables declared at top, then code to output/run each test
         String allOnes = "1111111111111111111111111111111111111111111111111111111111111111"; // 64 bit
         String allOnesKey = "11111111111111111111111111111111111111111111111111111111"; // 56 bit
         String allZeros = "0000000000000000000000000000000000000000000000000000000000000000"; // 64 bit

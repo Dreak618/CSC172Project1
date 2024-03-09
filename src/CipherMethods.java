@@ -1,3 +1,4 @@
+
 //Nicbolas Krein / Benjamin Levy
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,12 +34,12 @@ class CipherMethods {
                                         // encryption/decryption
                                 }
                                 // Pad final block with 0s if not full, allows us to encrypt partial blocks
-                                while (binaryLine.length() > 0) {
+                                while (binaryLine.length() > 0) { 
                                         if (binaryLine.length() < 64) {
                                                 while (binaryLine.length() < 64) {
                                                         binaryLine += "00000000";
                                                 }
-                                        }
+                                        } // adds each block to arraylist, moves on to next while possible
                                         Blocks.add(binaryLine.substring(0, 64));
                                         binaryLine = binaryLine.substring(64);
                                 }
@@ -63,7 +64,7 @@ class CipherMethods {
                                 while (currentCharBinary.length() < 8) {
                                         currentCharBinary = "0" + currentCharBinary;
                                 }
-                                binary += currentCharBinary;
+                                binary += currentCharBinary; // adds each character to the binary string
                                 binaries.add(binary);
                         }
                         Decrypter.writeDecryptedBlocks(binary, "binarydata.txt");
@@ -135,7 +136,7 @@ class CipherMethods {
                                 // blocks
                                 while ((line = reader.readLine()) != null) {
                                         blockLine += line;
-                                }
+                                } // chunks written info back into blocks for decryption
                                 while (blockLine.length() > 0) {
                                         Blocks.add(blockLine.substring(0, 64));
                                         blockLine = blockLine.substring(64);
@@ -155,15 +156,15 @@ class CipherMethods {
                         String temp; // temp variable used to swap L,R halves after each iteration
                         for (int i = 0; i < 10; i++) {
                                 inputKey = CipherMethods.keyScheduleTransform(inputKey); // set starting key
-                        }
+                        }       // (starting key must be last key used in encryption)
                         for (int i = 0; i < 10; i++) {
                                 temp = L; // swap L, R
                                 L = R;
                                 R = temp;
-
+                                //xOrs the result of the function with the left half to create the new left half
                                 L = xorIt(functionF(R, inputKey.substring(0, 32)), L);
-                                inputKey = keyScheduleTransform(inputKey); // specifically uses Decrypter's KST here
-                        }
+                                inputKey = keyScheduleTransform(inputKey); //transforms key for next round
+                        }       // specifically uses Decrypter's KST here
                         return L + R;
                 }
 
@@ -213,12 +214,12 @@ class CipherMethods {
                 }
 
                 // overrides CM.shiftIt()
-                private static String shiftIt(String binaryinput) {
+                private static String shiftIt(String binaryinput) { // 
                         StringBuilder sb = new StringBuilder(binaryinput.length());
-                        sb.append(binaryinput.charAt(binaryinput.length() - 1));
+                        sb.append(binaryinput.charAt(binaryinput.length() - 1)); // adds the last character first
                         for (int i = 0; i < binaryinput.length() - 1; i++) {
-                                sb.append(binaryinput.charAt(i));
-                        }
+                                sb.append(binaryinput.charAt(i)); // then adds the rest of the chars in order
+                        } // effectively applies right shift by 1 to string
                         return sb.toString();
                 }
 
@@ -234,16 +235,16 @@ class CipherMethods {
         private static String substitutionS(String binaryInput) {
                 int l = binaryInput.length();
 
-                StringBuilder result = new StringBuilder(binaryInput.length());
+                StringBuilder result = new StringBuilder(binaryInput.length()); // makes stringbuilder for output
                 String s1 = binaryInput.substring(0, l / 4), s2 = binaryInput.substring(l / 4, l / 2),
                                 s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l);
-                String[] splits = { s1, s2, s3, s4 };
-                for (String s : splits) {
+                String[] splits = { s1, s2, s3, s4 }; // splits input into 4 8-bit strings
+                for (String s : splits) { // computes output of each string individually by looking up row/column indices
                         int row = Integer.parseInt(s.substring(0, 4), 2);
                         int column = Integer.parseInt(s.substring(4, 8), 2);
-                        result.append(sTable[row][column]);
+                        result.append(sTable[row][column]); // adds output of each string to result
                 }
-                return result.toString();
+                return result.toString(); // returns outputs (concatenated)
         }
 
         // split block into 2
@@ -270,13 +271,13 @@ class CipherMethods {
                 return xOr.toString();
         }
 
-        private static String shiftIt(String binaryinput) {
+        private static String shiftIt(String binaryinput) { // Left shift by 1
                 StringBuilder sb = new StringBuilder(binaryinput.length());
-                char e1 = binaryinput.charAt(0);
+                char e1 = binaryinput.charAt(0); // holds on to first character
                 for (int i = 1; i < binaryinput.length(); i++) {
-                        sb.append(binaryinput.charAt(i));
+                        sb.append(binaryinput.charAt(i)); // adds other chars to result
                 }
-                sb.append(e1);
+                sb.append(e1); // adds first char to end (effectively Left shift by one)
                 return sb.toString();
         }
 
@@ -288,7 +289,7 @@ class CipherMethods {
                 for (int i = 0; i < binaryinput.length(); i++) {
                         sb.append(binaryinput.charAt(p[i] - 1));
                         // adds the digit of b located at (the value of p[i] - 1)
-                } // -1 so we don't get array out of bounds error
+                } // -1 so we don't get array out of bounds error (p is 1-32 not 0-31)
                 return sb.toString();
         }
 
