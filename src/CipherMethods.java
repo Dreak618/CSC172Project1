@@ -1,3 +1,4 @@
+//Nicbolas Krein / Benjamin Levy
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -147,7 +148,7 @@ class CipherMethods {
                         return Blocks;
                 }
 
-                public static String decryptBlock(String block, String inputKey) {
+                protected static String decryptBlock(String block, String inputKey) {
                         String[] split = CipherMethods.splitIt(block);
                         String L = split[0];
                         String R = split[1];
@@ -167,7 +168,7 @@ class CipherMethods {
                 }
 
                 // converts binary into plain-text
-                public static String binaryToText(String binaryText) {
+                protected static String binaryToText(String binaryText) {
                         String plainText = "";
                         // chars are in 8 bit chunks and loops until there are no chunks left
                         while (binaryText.length() > 7) {
@@ -197,7 +198,7 @@ class CipherMethods {
                 }
 
                 // write decrypted text to a new file
-                public static void writeDecryptedBlocks(String text, String inputFilePath) {
+                protected static void writeDecryptedBlocks(String text, String inputFilePath) {
                         // create file for decrypted text
                         File decryptedFile = new File(inputFilePath + ".decrypted");
                         String decryptPath = decryptedFile.getAbsolutePath();
