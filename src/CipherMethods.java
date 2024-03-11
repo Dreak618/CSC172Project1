@@ -7,20 +7,42 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Super class containing all methods used to encrypt and decrypt
+ * contains {@code Encrypter} and {@code Decrypter}
+ */
+// TODO: update comments after updating encryption
 class CipherMethods {
         protected static class Encrypter {
-                public Encrypter(String inputFilePath, String inputKey) {
-
-                        ArrayList<String> Blocks = createBlocks(inputFilePath);
-                        // take the file and break it into blocks (64 bits each) so they can be
-                        // encrypted
-
-                        // encrypt the blocks
-                        Blocks.replaceAll(n -> encryptBlock(n, inputKey));
-                        writeBlocks(inputFilePath, Blocks); // write the encrypted blocks to the output file
+                /**
+                 * //TODO: use fileToString and encrytion
+                 * Constructs a {@code Encrypter} which takes a file and input key,
+                 * reads the file and turns the plain text into binary,
+                 * breaks the binary into 64 bit blocks,
+                 * encrypts the blocks using {@see encryption TODO: implement} and then writes
+                 * the encrypted binary to
+                 * a new file
+                 * 
+                 * @param inputFile file being encrypted
+                 * @param inputKey  key used for encryption
+                 */
+                public Encrypter(String inputFile, String inputKey) {
+                        String fileAsString = fileToString(inputFile, true);
+                        String fileAsBinaryString = textToBinary(fileAsString);
+                        ArrayList<String> Blocks = createBlocks(inputFile); // create blocks
+                        Blocks.replaceAll(n -> encryptBlock(n, inputKey)); // encrypt the blocks
+                        writeBlocks(inputFile, Blocks); // write the encrypted blocks to the output file
                 }
 
-                public static String encryption(String longBinaryInput, String inputKey) throws IOException {
+                /**
+                 * Encrypts a long binary string by breaking it into blocks and then encrypting
+                 * blocks using {@code encryptBlock}TODO: this
+                 * 
+                 * @param longBinaryInput binary string being encrypted
+                 * @param inputKey        key used for encryption
+                 * @return encrypted text
+                 */
+                public static String encryption(String longBinaryInput, String inputKey) {
                         // Create list of blocks
                         ArrayList<String> Blocks = new ArrayList<>();
                         // breaks the longBinaryInput into blocks of 64 bits
@@ -46,18 +68,25 @@ class CipherMethods {
                         return encryped;
                 }
 
-                // takes plain text and breaks it into 64 bit blocks
-                private static ArrayList<String> createBlocks(String inputFilePath) {
+                /**
+                 * Breaks binary string into 64 bit blocks and returns an array of blocks
+                 * if the binary text cannot evenly be broken into blocks, pads the final block
+                 * with {@string "0"} until a complete block can be formed
+                 * 
+                 * @param inputFile input binary sting being broken into blocks
+                 * @return List of all the blocks
+                 */
+                private static ArrayList<String> createBlocks(String inputFile) {
                         ArrayList<String> Blocks = new ArrayList<String>();
                         // Create a buffered file reader
-                        System.out.println(inputFilePath);
+                        System.out.println(inputFile);
                         try (BufferedReader reader = new BufferedReader(new FileReader(
-                                        inputFilePath))) {
+                                        inputFile))) {
                                 String binaryLine = "";
                                 String line = "";
                                 // Takes every line in the file and converts the plain-text into 64bit blocks
                                 while ((line = reader.readLine()) != null) {
-                                        binaryLine += lineToBinary(line); // convert lines to binary
+                                        binaryLine += textToBinary(line); // convert lines to binary
                                         binaryLine += "11111111"; // newline after each line
                                         // we use this as a newline character on the other end to retain formatting over
                                         // encryption/decryption
@@ -66,7 +95,7 @@ class CipherMethods {
                                 while (binaryLine.length() > 0) {
                                         if (binaryLine.length() < 64) {
                                                 while (binaryLine.length() < 64) {
-                                                        binaryLine += "00000000";
+                                                        binaryLine += "0";
                                                 }
                                         } // adds each block to arraylist, moves on to next while possible
                                         Blocks.add(binaryLine.substring(0, 64));
@@ -74,13 +103,20 @@ class CipherMethods {
                                 }
                                 reader.close();
                         } catch (IOException e) {
-                                System.out.println("Error reading file while encrypting");
+                                System.out.println("Error reading file while encrypting " + e);
                         }
                         return Blocks;
                 }
 
-                // convert chars in line to 8 bit binary strings
-                private static String lineToBinary(String line) {
+                /**
+                 * Converts a plain text String into a binary String,
+                 * does this by converting each {@char} in the String to its binary equivilant
+                 * 
+                 * @param line String being converted to binary
+                 * @return Binary equivilant of input
+                 * 
+                 */
+                private static String textToBinary(String line) {
                         ArrayList<String> binaries = new ArrayList<>(line.length() / 8);
                         // Loops through all chars in line
                         String binary = "";
@@ -101,7 +137,21 @@ class CipherMethods {
                         return binary;
                 }
 
-                // encyrpts 1 block at a time
+                /**
+                 * Encrypts a block which is a 64 bit binary String
+                 * Splits the block into 2 using {@see CipherMethods.splitIt}
+                 * 
+                 * Then adjusts key using {@see keyScheduleTransform},
+                 * applies {@see functionF} to one half of the block
+                 * uses {@see xorIt} to xor the 2 halfs
+                 * finaly swaps the 2 halfs
+                 * Repeats these steps 10 times then combines the 2 halfs together to form
+                 * encrypted block
+                 * 
+                 * @param block    String being encrypted
+                 * @param inputKey key used for encryption
+                 * @return encrypted block
+                 */
                 protected static String encryptBlock(String block, String inputKey) {
                         // Split Block into 2 32 bit strings
                         String[] split = splitIt(block);
@@ -122,10 +172,15 @@ class CipherMethods {
                         return L + R; // return encrypted block
                 }
 
-                // writes blocks to file
-                private static void writeBlocks(String inputFilePath, ArrayList<String> Blocks) {
+                /**
+                 * Writes the encrypted text to a new file
+                 * 
+                 * @param inputFile name of file being encrypted
+                 * @param Blocks    blocks being written
+                 */
+                private static void writeBlocks(String inputFile, ArrayList<String> Blocks) {
                         // Create a file for encrypted text
-                        File encryptedFile = new File(inputFilePath.substring(0, inputFilePath.length() - 4) + "E.txt");
+                        File encryptedFile = new File(inputFile.substring(0, inputFile.length() - 4) + "E.txt");
                         String encryptPath = encryptedFile.getAbsolutePath();
                         // Write the encrypted blocks to the file
                         try (FileWriter writer = new FileWriter(encryptPath)) {
@@ -140,16 +195,16 @@ class CipherMethods {
         }
 
         protected static class Decrypter {
-                public Decrypter(String inputFilePath, String inputKey) {
-                        ArrayList<String> Blocks = createBlocks(inputFilePath);
+                public Decrypter(String inputFile, String inputKey) {
+                        ArrayList<String> Blocks = createBlocks(inputFile);
                         String outputText = "";
-                        createBlocks(inputFilePath);
+                        createBlocks(inputFile);
                         for (String block : Blocks) {
                                 block = decryptBlock(block, inputKey);
                                 block = binaryToText(block);
                                 outputText += block;
                         }
-                        writeDecryptedBlocks(outputText, inputFilePath);
+                        writeDecryptedBlocks(outputText, inputFile);
                         // Convert the decrypted binary into text
                         // Write decrypted binary to file
                 }
@@ -180,10 +235,10 @@ class CipherMethods {
                         return decrypted;
                 }
 
-                private ArrayList<String> createBlocks(String inputFilePath) {
+                private ArrayList<String> createBlocks(String inputFile) {
                         ArrayList<String> Blocks = new ArrayList<String>();
                         // Create a buffered file reader
-                        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
+                        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
                                 String line = "";
                                 String blockLine = "";
                                 // Takes every line in the file and converts the plain-text into 64bit binary
@@ -209,7 +264,7 @@ class CipherMethods {
                         String R = split[1];
                         String temp; // temp variable used to swap L,R halves after each iteration
                         for (int i = 0; i < 10; i++) {
-                                inputKey = CipherMethods.keyScheduleTransform(inputKey); // set starting key
+                                inputKey = keyScheduleTransform(inputKey); // set starting key
                         } // (starting key must be last key used in encryption)
                         for (int i = 0; i < 10; i++) {
                                 temp = L; // swap L, R
@@ -218,7 +273,7 @@ class CipherMethods {
                                 // xOrs the result of the function with the left half to create the new left
                                 // half
                                 L = xorIt(functionF(R, inputKey.substring(0, 32)), L);
-                                inputKey = keyScheduleTransform(inputKey); // transforms key for next round
+                                inputKey = keyScheduleTransformUndo(inputKey); // transforms key for next round
                         } // specifically uses Decrypter's KST here
                         return L + R;
                 }
@@ -254,9 +309,9 @@ class CipherMethods {
                 }
 
                 // write decrypted text to a new file
-                protected static void writeDecryptedBlocks(String text, String inputFilePath) {
+                protected static void writeDecryptedBlocks(String text, String inputFile) {
                         // create file for decrypted text
-                        File decryptedFile = new File(inputFilePath.substring(0, inputFilePath.length() - 5) + "D.txt");
+                        File decryptedFile = new File(inputFile.substring(0, inputFile.length() - 5) + "D.txt");
                         String decryptPath = decryptedFile.getAbsolutePath();
 
                         // write decrypted text to file
@@ -280,11 +335,39 @@ class CipherMethods {
 
                 // this one uses a right shift to generate the keys in reverse order, overrides
                 // CM.kst()
-                private static String keyScheduleTransform(String inputkey) {
+                private static String keyScheduleTransformUndo(String inputkey) {
                         String C = shiftIt(splitIt(inputkey)[0]);
                         String D = shiftIt(splitIt(inputkey)[1]);
                         return C + D;
                 }
+        }
+
+        /**
+         * Reads a file and converts the text to string
+         * stores new lines as {@string "11111111"}
+         * 
+         * @param inputFile file path of file being encrypted
+         * @param readLines determines if lines from file should be maintined
+         * @return String of file text
+         */
+        private static String fileToString(String inputFile, boolean readLines) {
+                String fileString = ""; // String of text of file
+                try (BufferedReader reader = new BufferedReader(new FileReader(
+                                inputFile))) {
+                        String line = ""; // current line of file
+                        while ((line = reader.readLine()) != null) {
+                                fileString += line;
+                                // if line is not empty and reading lines is true adds line to string
+                                if (readLines && line.length() > 0) {
+                                        fileString += "\n";
+                                }
+
+                        }
+                        System.out.println(fileString);
+                } catch (IOException e) {
+                        System.out.println("Error while reading file");
+                }
+                return fileString;
         }
 
         private static String substitutionS(String binaryInput) {
