@@ -96,7 +96,7 @@ class CipherMethods {
                 // writes blocks to file
                 private static void writeBlocks(String inputFilePath, ArrayList<String> Blocks) {
                         // Create a file for encrypted text
-                        File encryptedFile = new File(inputFilePath + ".encrypted");
+                        File encryptedFile = new File(inputFilePath.substring(0, inputFilePath.length() - 4) + "E.txt");
                         String encryptPath = encryptedFile.getAbsolutePath();
                         // Write the encrypted blocks to the file
                         try (FileWriter writer = new FileWriter(encryptPath)) {
@@ -201,7 +201,7 @@ class CipherMethods {
                 // write decrypted text to a new file
                 protected static void writeDecryptedBlocks(String text, String inputFilePath) {
                         // create file for decrypted text
-                        File decryptedFile = new File(inputFilePath + ".decrypted");
+                        File decryptedFile = new File(inputFilePath.substring(0, inputFilePath.length() - 5) + "D.txt");
                         String decryptPath = decryptedFile.getAbsolutePath();
 
                         // write decrypted text to file

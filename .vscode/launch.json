@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ProjectOne",
+            "request": "launch",
+            "mainClass": "ProjectOne",
+            "projectName": "CSC172Project1_8f9b30d2"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
