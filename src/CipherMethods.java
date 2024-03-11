@@ -15,15 +15,14 @@ class CipherMethods {
 
         /**
          * Encrypts a provided file by:
-         * - Reading the file {@see fileToString},
-         * - Turning the plain text into binary {@see textToBinary}
-         * - Encrypting the binary {@see encryption}
-         * Then writes the encrypted binary to a new file {@see writeText}
+         * - Reading the file and converting the text to a string {@code fileToString},
+         * - Turning the plain text into binary {@code textToBinary}
+         * - Encrypting the binary {@code encryption}
+         * Then writes the encrypted binary to a new file {@code writeText}
          * 
          * @param inputFile file being encrypted
          * @param inputKey  key used for encryption
          */
-
         public static void encryptFile(String inputFile, String inputKey) {
                 String fileAsString = fileToString(inputFile, true);
                 String fileAsBinaryString = textToBinary(fileAsString);
@@ -32,9 +31,9 @@ class CipherMethods {
         }
 
         /**
-         * Encrypts a long binary string by:
-         * - First breaking it into blocks {@see createBlocks}
-         * - Then encrypting blocks using {@code encryptBlock}
+         * Encrypts a binary string by:
+         * - Breaking it into 64 bit blocks {@code createBlocks}
+         * - Encrypting the blocks using {@code encryptBlock}
          * Then combines all blocks together and returns them
          * 
          * @param longBinaryInput binary string being encrypted
@@ -42,12 +41,11 @@ class CipherMethods {
          * @return encrypted text
          */
         public static String encryption(String longBinaryInput, String inputKey) {
-                ArrayList<String> Blocks = createBlocks(longBinaryInput);
+                ArrayList<String> Blocks = createBlocks(longBinaryInput); // List of 64 bit Strings
 
-                // encrypt all the blocks
-                Blocks.replaceAll(n -> encryptBlock(n, inputKey));
+                Blocks.replaceAll(n -> encryptBlock(n, inputKey)); // Encrypt all blocks
 
-                // combine block
+                // Combine the blocks
                 String encrypedBinary = "";
                 for (String b : Blocks) {
                         encrypedBinary += b;
@@ -58,17 +56,17 @@ class CipherMethods {
 
         /**
          * Encrypts a block which is a 64 bit binary String
-         * Splits the block into 2 using {@see splitIt}
+         * First splits the block into 2 using {@code splitIt}
          * 
          * Then does the following 10 times:
-         * Adjust key using {@see keyScheduleTransform},
-         * Apply {@see functionF} to one half of the block
-         * xOrs both halfs {@see xorIt}
+         * - Adjust key using {@code keyScheduleTransform},
+         * - Apply {@code functionF} to one half of the block
+         * - xOr both halfs {@code xorIt} and set the left half to that value
          * Swaps the 2 halfs
          * 
          * Finaly, combines 2 halfs together to form the encrypted block
          * 
-         * @param block    String being encrypted
+         * @param block    64 bit String being encrypted
          * @param inputKey key used for encryption
          * @return encrypted block
          */
@@ -93,15 +91,14 @@ class CipherMethods {
         }
 
         /**
-         * Constructs a {@code Decrypter} which takes a file and input key,
-         * reads the file {@see fileToString},
-         * turns the plain text into binary {@see textToBinary}
-         * encrypts the binary {@see encryption}
-         * and then writes the encrypted binary to a new file
-         * {@see writeText}
+         * Decrypts a provided file by:
+         * - Reading the file and converting the text to a string {@code fileToString},
+         * - Decrypting {@code fileAsBinaryString} using {@code decryption}
+         * - Converts {@code decryptedString} to plain text using {@code binaryToText}
+         * Then writes the decrypted binary to a new file {@code writeText}
          * 
-         * @param inputFile file being encrypted
-         * @param inputKey  key used for encryption
+         * @param inputFile file being decrypted
+         * @param inputKey  key used for decryption
          */
         public static void decryptFile(String inputFile, String inputKey) {
                 String fileAsBinaryString = fileToString(inputFile, false);
@@ -110,33 +107,65 @@ class CipherMethods {
                 writeDecryptedBlocks(binaryAsText, inputFile);
         }
 
+        /**
+         * Decrypts a binary string by:
+         * - Breaking it into 64 bit blocks {@code createBlocks}
+         * - Decryting the blocks using {@code decryptBlock}
+         * Then combines all blocks together and returns them
+         * 
+         * @param longBinaryInput binary string being decrypted
+         * @param inputKey        key used for decryption
+         * @return decrypted text
+         */
         public static String decryption(String longBinaryInput, String inputKey) {
-                // Create list of blocks
-                ArrayList<String> Blocks = createBlocks(longBinaryInput);
-                Blocks.replaceAll(n -> decryptBlock(n, inputKey));
+                ArrayList<String> Blocks = createBlocks(longBinaryInput); // List of 64 bit Strings
+
+                Blocks.replaceAll(n -> decryptBlock(n, inputKey)); // Decrypt all blocks
+
+                // Combine the blocks
                 String decrypted = "";
-                // combine all blocks into 1 big string
                 for (String b : Blocks) {
                         decrypted += b;
                 }
-                // returns the decrypted long binary input
+
                 return decrypted;
         }
 
+        /**
+         * Decrypts a block which is a 64 bit binary String
+         * First splits the block into 2 using {@code splitIt}
+         * Then runs {@code keyScheduleTransform} 10 times to get the key used at the
+         * end of encryption
+         * 
+         * Then does the following 10 times:
+         * - Swaps the 2 halfs
+         * - xOr both halfs {@code xorIt} and set the left half to that value
+         * - Adjust key using {@code keyScheduleTransformUndo},
+         * - Apply {@code functionF} to one half of the block
+         * -
+         * -
+         * 
+         * Finaly, combines 2 halfs together to form the decrypted block
+         * 
+         * @param block    64 bit String being decypted
+         * @param inputKey key used for encryption
+         * @return encrypted block
+         */
         public static String decryptBlock(String block, String inputKey) {
                 String[] split = splitIt(block);
                 String L = split[0];
                 String R = split[1];
-                String temp; // temp variable used to swap L,R halves after each iteration
+                String temp; // temp variable used to swap L and R
+
                 for (int i = 0; i < 10; i++) {
-                        inputKey = keyScheduleTransform(inputKey); // set starting key
-                } // (starting key must be last key used in encryption)
+                        inputKey = keyScheduleTransform(inputKey); // initial key adjustment
+                }
+                // Decryption
                 for (int i = 0; i < 10; i++) {
-                        temp = L; // swap L, R
+                        temp = L;
                         L = R;
                         R = temp;
-                        // xOrs the result of the function with the left half to create the new left
-                        // half
+
                         L = xorIt(functionF(R, inputKey.substring(0, 32)), L);
                         inputKey = keyScheduleTransformUndo(inputKey); // transforms key for next round
                 } // specifically uses Decrypter's KST here
