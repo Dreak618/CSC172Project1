@@ -6,61 +6,51 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Super class containing all methods used to encrypt and decrypt
  * contains {@code Encrypter} and {@code Decrypter}
  */
-// TODO: update comments after updating encryption
 class CipherMethods {
         protected static class Encrypter {
                 /**
-                 * //TODO: use fileToString and encrytion
                  * Constructs a {@code Encrypter} which takes a file and input key,
-                 * reads the file and turns the plain text into binary,
-                 * breaks the binary into 64 bit blocks,
-                 * encrypts the blocks using {@see encryption TODO: implement} and then writes
-                 * the encrypted binary to
-                 * a new file
+                 * reads the file {@see CipherMethods.fileToString},
+                 * turns the plain text into binary {@see CipherMethods.textToBinary}
+                 * encrypts the binary {@see encryption}
+                 * and then writes the encrypted binary to a new file
+                 * {@see CipherMethods.writeText}
                  * 
                  * @param inputFile file being encrypted
                  * @param inputKey  key used for encryption
                  */
+
                 public Encrypter(String inputFile, String inputKey) {
                         String fileAsString = fileToString(inputFile, true);
                         String fileAsBinaryString = textToBinary(fileAsString);
-                        ArrayList<String> Blocks = createBlocks(inputFile); // create blocks
-                        Blocks.replaceAll(n -> encryptBlock(n, inputKey)); // encrypt the blocks
-                        writeBlocks(inputFile, Blocks); // write the encrypted blocks to the output file
+                        String encryptedBinary = encryption(fileAsBinaryString, inputKey);
+                        writeText(inputFile, encryptedBinary, "E"); // write the encrypted blocks to the output file
                 }
 
                 /**
-                 * Encrypts a long binary string by breaking it into blocks and then encrypting
-                 * blocks using {@code encryptBlock}TODO: this
+                 * Encrypts a long binary string by
+                 * first breaking it into blocks {@see CipherMethods.createBlocks}
+                 * then encrypting blocks using {@code encryptBlock}
                  * 
                  * @param longBinaryInput binary string being encrypted
                  * @param inputKey        key used for encryption
                  * @return encrypted text
                  */
                 public static String encryption(String longBinaryInput, String inputKey) {
-                        // Create list of blocks
-                        ArrayList<String> Blocks = new ArrayList<>();
-                        // breaks the longBinaryInput into blocks of 64 bits
-                        while (longBinaryInput.length() > 0) {
-                                // Pads final block with 0s if it is smaller than 64 bits
-                                if (longBinaryInput.length() < 64) {
-                                        while (longBinaryInput.length() < 64) {
-                                                longBinaryInput += "0";
-                                        }
-                                }
-                                // adds each block to list, moves on to next while possible
-                                Blocks.add(longBinaryInput.substring(0, 64));
-                                longBinaryInput = longBinaryInput.substring(64);
-                        }
+                        // create blocks
+                        ArrayList<String> Blocks = createBlocks(longBinaryInput);
+
                         // encrypt all the blocks
                         Blocks.replaceAll(n -> encryptBlock(n, inputKey));
-                        String encryped = "";
+
                         // combine all blocks into 1 big string
+                        String encryped = "";
                         for (String b : Blocks) {
                                 encryped += b;
                         }
@@ -69,128 +59,38 @@ class CipherMethods {
                 }
 
                 /**
-                 * Breaks binary string into 64 bit blocks and returns an array of blocks
-                 * if the binary text cannot evenly be broken into blocks, pads the final block
-                 * with {@string "0"} until a complete block can be formed
-                 * 
-                 * @param inputFile input binary sting being broken into blocks
-                 * @return List of all the blocks
-                 */
-                private static ArrayList<String> createBlocks(String inputFile) {
-                        ArrayList<String> Blocks = new ArrayList<String>();
-                        // Create a buffered file reader
-                        System.out.println(inputFile);
-                        try (BufferedReader reader = new BufferedReader(new FileReader(
-                                        inputFile))) {
-                                String binaryLine = "";
-                                String line = "";
-                                // Takes every line in the file and converts the plain-text into 64bit blocks
-                                while ((line = reader.readLine()) != null) {
-                                        binaryLine += textToBinary(line); // convert lines to binary
-                                        binaryLine += "11111111"; // newline after each line
-                                        // we use this as a newline character on the other end to retain formatting over
-                                        // encryption/decryption
-                                }
-                                // Pad final block with 0s if not full, allows us to encrypt partial blocks
-                                while (binaryLine.length() > 0) {
-                                        if (binaryLine.length() < 64) {
-                                                while (binaryLine.length() < 64) {
-                                                        binaryLine += "0";
-                                                }
-                                        } // adds each block to arraylist, moves on to next while possible
-                                        Blocks.add(binaryLine.substring(0, 64));
-                                        binaryLine = binaryLine.substring(64);
-                                }
-                                reader.close();
-                        } catch (IOException e) {
-                                System.out.println("Error reading file while encrypting " + e);
-                        }
-                        return Blocks;
-                }
-
-                /**
-                 * Converts a plain text String into a binary String,
-                 * does this by converting each {@char} in the String to its binary equivilant
-                 * 
-                 * @param line String being converted to binary
-                 * @return Binary equivilant of input
-                 * 
-                 */
-                private static String textToBinary(String line) {
-                        ArrayList<String> binaries = new ArrayList<>(line.length() / 8);
-                        // Loops through all chars in line
-                        String binary = "";
-                        for (int i = 0; i < line.length(); i++) {
-                                // increase the count of chars written, used to keeping track of block size
-                                // Convert char to binary
-                                String currentCharBinary = Integer.toBinaryString(line.charAt(i));
-
-                                // add leading 0s to char binary string if needed to make it 8 bytes
-                                while (currentCharBinary.length() < 8) {
-                                        currentCharBinary = "0" + currentCharBinary;
-                                }
-                                binary += currentCharBinary; // adds each character to the binary string
-                                binaries.add(binary);
-                        }
-                        Decrypter.writeDecryptedBlocks(binary, "binarydata.txt");
-
-                        return binary;
-                }
-
-                /**
                  * Encrypts a block which is a 64 bit binary String
                  * Splits the block into 2 using {@see CipherMethods.splitIt}
                  * 
-                 * Then adjusts key using {@see keyScheduleTransform},
-                 * applies {@see functionF} to one half of the block
-                 * uses {@see xorIt} to xor the 2 halfs
-                 * finaly swaps the 2 halfs
-                 * Repeats these steps 10 times then combines the 2 halfs together to form
-                 * encrypted block
+                 * Then does the following 10 times:
+                 * Adjust key using {@see CipherMethods.keyScheduleTransform},
+                 * Apply {@see CipherMethods.functionF} to one half of the block
+                 * xOrs both halfs {@see CipherMethods.xorIt}
+                 * Swaps the 2 halfs
+                 * 
+                 * Finaly, combines 2 halfs together to form the encrypted block
                  * 
                  * @param block    String being encrypted
                  * @param inputKey key used for encryption
                  * @return encrypted block
                  */
                 protected static String encryptBlock(String block, String inputKey) {
-                        // Split Block into 2 32 bit strings
+                        // Split Block into 2
                         String[] split = splitIt(block);
                         String L = split[0];
                         String R = split[1];
                         String temp; // temp variable used to swap L,R halves after each iteration
-                        // Steps to encrypt a block: Done 10 times to encrypt
+
                         for (int i = 0; i < 10; i++) {
-                                inputKey = keyScheduleTransform(inputKey); // do this first to create this
-                                // iteration's round key
+                                inputKey = keyScheduleTransform(inputKey);
                                 temp = functionF(R, inputKey.substring(0, 32));
                                 L = xorIt(temp, L);
 
-                                temp = L; // // swap L and R
+                                temp = L;
                                 L = R;
                                 R = temp;
                         }
-                        return L + R; // return encrypted block
-                }
-
-                /**
-                 * Writes the encrypted text to a new file
-                 * 
-                 * @param inputFile name of file being encrypted
-                 * @param Blocks    blocks being written
-                 */
-                private static void writeBlocks(String inputFile, ArrayList<String> Blocks) {
-                        // Create a file for encrypted text
-                        File encryptedFile = new File(inputFile.substring(0, inputFile.length() - 4) + "E.txt");
-                        String encryptPath = encryptedFile.getAbsolutePath();
-                        // Write the encrypted blocks to the file
-                        try (FileWriter writer = new FileWriter(encryptPath)) {
-                                for (String block : Blocks) {
-                                        writer.write(block + "\n");
-                                }
-                                writer.close();
-                        } catch (IOException e) {
-                                System.out.println("Error writing to file while encrypting");
-                        }
+                        return L + R;
                 }
         }
 
@@ -291,12 +191,15 @@ class CipherMethods {
                                         if (binaryText.length() > 7) { // so it doesnt break if last char is "00000000"
                                                 binaryText = binaryText.substring(8);
                                         }
-                                } else if (currentChar.equals("11111111")) {
-                                        // if read new line marker add new line
-                                        plainText = plainText + "\n";
-                                        binaryText = binaryText.substring(8);
+                                }
 
-                                } else {
+                                // else if (currentChar.equals("11111111")) {
+                                // // if read new line marker add new line
+                                // plainText = plainText + "\n";
+                                // binaryText = binaryText.substring(8);
+
+                                // }
+                                else {
                                         // if not, get the character associated with the given binary value
                                         char nextCharacter = (char) Integer.parseInt(currentChar, 2);
                                         // adds that character to plain text string
@@ -368,6 +271,89 @@ class CipherMethods {
                         System.out.println("Error while reading file");
                 }
                 return fileString;
+        }
+
+        /**
+         * Converts a plain text String into a binary String,
+         * does this by converting each {@char} in the String to its binary equivilant.
+         * Uses a scanner to read the text line by line and then adds the
+         * {@string "00001010"} to the binary text if there is another line which is
+         * new line in unicode
+         * 
+         * @param text String being converted to binary
+         * @return Binary equivilant of input
+         * 
+         */
+        private static String textToBinary(String text) {
+                String binaryString = "";
+                Scanner textScanner = new Scanner(text);
+                String line = textScanner.nextLine();
+                while (line != null) {
+                        // loops through each char in the line
+                        for (int i = 0; i < line.length(); i++) {
+                                // convert char to binary
+                                String currentCharBinary = Integer.toBinaryString(line.charAt(i));
+
+                                // add leading 0s to char binary string if needed to make it 8 bytes
+                                while (currentCharBinary.length() < 8) {
+                                        currentCharBinary = "0" + currentCharBinary;
+                                }
+                                binaryString += currentCharBinary; // adds each character to the binary string
+                        }
+                        // adds next line charachter and sets next line
+                        if (textScanner.hasNextLine()) {
+                                binaryString += "00001010";
+                                line = textScanner.nextLine();
+                        } else {
+                                line = null;
+                        }
+                }
+                textScanner.close();
+                return binaryString;
+        }
+
+        /**
+         * Breaks a string into blocks of length 64 and then adds blocks to a list.
+         * If the final block would be shorter than 64 characters,
+         * adds 0s until length is 64
+         * 
+         * @param binaryString String being broken into blocks
+         * @return List of all blocks
+         */
+        private static ArrayList<String> createBlocks(String binaryString) {
+                ArrayList<String> Blocks = new ArrayList<String>();
+                while (binaryString.length() > 0) {
+                        // Pads final block with 0s if it is smaller than 64 bits
+                        if (binaryString.length() < 64) {
+                                while (binaryString.length() < 64) {
+                                        binaryString += "0";
+                                }
+                        }
+                        // adds each block to list, moves on to next while possible
+                        Blocks.add(binaryString.substring(0, 64));
+                        binaryString = binaryString.substring(64);
+                }
+                return Blocks;
+        }
+
+        /**
+         * Writes text to a new file
+         * 
+         * @param inputFile the name of the file that was being read from initialy
+         * @param text      the text that is being written
+         * @param action    the action being done (currently E = encrypt, D = decrypt)
+         */
+        private static void writeText(String inputFile, String text, String action) {
+                // Create a file for encrypted text
+                File newFile = new File(inputFile.substring(0, inputFile.length() - 4) + action + ".txt");
+                String filePath = newFile.getAbsolutePath();
+                // Write the encrypted blocks to the file
+                try (FileWriter writer = new FileWriter(filePath)) {
+                        writer.write(text);
+                        writer.close();
+                } catch (IOException e) {
+                        System.out.println("Error while writing to file");
+                }
         }
 
         private static String substitutionS(String binaryInput) {
