@@ -6,8 +6,8 @@ Nicholas Krein / Benjamin Levy
 Order of tasks:
 Encryption:
  Read the file (plaintext)
- Convert to binary (using given algorithm and user secret key)
- Encrypt the data
+ Convert to binary 
+ Encrypt the data (using given algorithm and user secret key)
  Write encrypted binary to file
 
 Decryption:
@@ -18,7 +18,8 @@ Decryption:
 
 Instructions:
 When run, the program will first output test cases.
-When prompted, answer E/D for encryption/Decryption, filename, and 56-bit binary key. The program will encrypt/decrypt your file and write to a new file (either [name].encrypted or [name].decrypted respectively)
+When prompted, answer E/D for encryption/Decryption, filename, and 56-bit binary key.
+The program will encrypt/decrypt your file and write to a new file (either [name].encrypted or [name].decrypted respectively)
 
 Features:
 Read text from file, convert to binary
@@ -30,7 +31,7 @@ Reads encrypted binary from file
 Decrypts binary block by block
 Outputs decrypted block with same formatting as original
 
-Well encapsulated so that individual function methods cnanot be accessed from outside the package
+Well encapsulated so that individual function methods cannot be accessed from outside the package
 Encrypter/Decrypter located inside central CipherMethods class to avoid redundancy
 
 As part of encrypter/decrypter, the program has methods for encrypting and decrypting individual blocks, writing the

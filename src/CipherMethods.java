@@ -34,7 +34,7 @@ class CipherMethods {
                                         // encryption/decryption
                                 }
                                 // Pad final block with 0s if not full, allows us to encrypt partial blocks
-                                while (binaryLine.length() > 0) { 
+                                while (binaryLine.length() > 0) {
                                         if (binaryLine.length() < 64) {
                                                 while (binaryLine.length() < 64) {
                                                         binaryLine += "00000000";
@@ -113,7 +113,6 @@ class CipherMethods {
         protected static class Decrypter {
                 public Decrypter(String inputFilePath, String inputKey) {
                         ArrayList<String> Blocks = createBlocks(inputFilePath);
-                        // String binaryText = decryptText(inputFilePath); // NYI
                         String outputText = "";
                         createBlocks(inputFilePath);
                         for (String block : Blocks) {
@@ -156,15 +155,16 @@ class CipherMethods {
                         String temp; // temp variable used to swap L,R halves after each iteration
                         for (int i = 0; i < 10; i++) {
                                 inputKey = CipherMethods.keyScheduleTransform(inputKey); // set starting key
-                        }       // (starting key must be last key used in encryption)
+                        } // (starting key must be last key used in encryption)
                         for (int i = 0; i < 10; i++) {
                                 temp = L; // swap L, R
                                 L = R;
                                 R = temp;
-                                //xOrs the result of the function with the left half to create the new left half
+                                // xOrs the result of the function with the left half to create the new left
+                                // half
                                 L = xorIt(functionF(R, inputKey.substring(0, 32)), L);
-                                inputKey = keyScheduleTransform(inputKey); //transforms key for next round
-                        }       // specifically uses Decrypter's KST here
+                                inputKey = keyScheduleTransform(inputKey); // transforms key for next round
+                        } // specifically uses Decrypter's KST here
                         return L + R;
                 }
 
@@ -214,7 +214,7 @@ class CipherMethods {
                 }
 
                 // overrides CM.shiftIt()
-                private static String shiftIt(String binaryinput) { // 
+                private static String shiftIt(String binaryinput) { //
                         StringBuilder sb = new StringBuilder(binaryinput.length());
                         sb.append(binaryinput.charAt(binaryinput.length() - 1)); // adds the last character first
                         for (int i = 0; i < binaryinput.length() - 1; i++) {
@@ -239,7 +239,8 @@ class CipherMethods {
                 String s1 = binaryInput.substring(0, l / 4), s2 = binaryInput.substring(l / 4, l / 2),
                                 s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l);
                 String[] splits = { s1, s2, s3, s4 }; // splits input into 4 8-bit strings
-                for (String s : splits) { // computes output of each string individually by looking up row/column indices
+                for (String s : splits) { // computes output of each string individually by looking up row/column
+                                          // indices
                         int row = Integer.parseInt(s.substring(0, 4), 2);
                         int column = Integer.parseInt(s.substring(4, 8), 2);
                         result.append(sTable[row][column]); // adds output of each string to result
