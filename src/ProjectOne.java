@@ -12,7 +12,7 @@ public class ProjectOne {
 
     public static void testRun() {
         String ED = "E";
-        String inputKey = "00000000000000000000000000000000000000000000000000000000";
+        String inputKey = "00000000000000000000011000000000000000000000000000000000";
         String inputFile = "data.txt";
 
         // runs method to encrypt/decrypt based on user input

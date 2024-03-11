@@ -104,7 +104,7 @@ class CipherMethods {
                 String fileAsBinaryString = fileToString(inputFile, false);
                 String decryptedString = decryption(fileAsBinaryString, inputKey);
                 String binaryAsText = binaryToText(decryptedString);
-                writeDecryptedBlocks(binaryAsText, inputFile);
+                writeText(inputFile, binaryAsText, "D");
         }
 
         /**
@@ -139,17 +139,14 @@ class CipherMethods {
          * 
          * Then does the following 10 times:
          * - Swaps the 2 halfs
+         * - Apply {@code functionF} to one half of the block
          * - xOr both halfs {@code xorIt} and set the left half to that value
          * - Adjust key using {@code keyScheduleTransformUndo},
-         * - Apply {@code functionF} to one half of the block
-         * -
-         * -
+         * Then combines 2 halfs together to form the decrypted block
          * 
-         * Finaly, combines 2 halfs together to form the decrypted block
-         * 
-         * @param block    64 bit String being decypted
-         * @param inputKey key used for encryption
-         * @return encrypted block
+         * @param block    64 bit String being decryption
+         * @param inputKey key used for decryption
+         * @return decrypted block
          */
         public static String decryptBlock(String block, String inputKey) {
                 String[] split = splitIt(block);
@@ -168,79 +165,50 @@ class CipherMethods {
 
                         L = xorIt(functionF(R, inputKey.substring(0, 32)), L);
                         inputKey = keyScheduleTransformUndo(inputKey); // transforms key for next round
-                } // specifically uses Decrypter's KST here
+                }
                 return L + R;
         }
 
-        // converts binary into plain-text
-        private static String binaryToText(String binaryText) {
-                String plainText = "";
-                // chars are in 8 bit chunks and loops until there are no chunks left
-                while (binaryText.length() > 7) {
-                        // gets current 8 bit chunck of binary text
-                        String currentChar = binaryText.substring(0, 8);
-                        // checks if current chunk is padding, if it is cuts it out
-                        if (currentChar.equals("00000000")) {
-                                binaryText = binaryText.substring(8);
-                        } else {
-                                // convert binrary chunk to char and add it to plainText String
-                                char nextCharacter = (char) Integer.parseInt(currentChar, 2);
-                                plainText += nextCharacter;
-
-                                // cut out that chunk from the binary string
-                                binaryText = binaryText.substring(8);
-                        }
-                }
-                return plainText;
-        }
-
-        // write decrypted text to a new file
-        private static void writeDecryptedBlocks(String text, String inputFile) {
-                // create file for decrypted text
-                File decryptedFile = new File(inputFile.substring(0, inputFile.length() - 5) + "D.txt");
-                String decryptPath = decryptedFile.getAbsolutePath();
-
-                // write decrypted text to file
-                try (FileWriter writer = new FileWriter(decryptPath)) {
-                        writer.write(text);
-                        writer.close();
-                } catch (IOException e) {
-                        System.out.println("no file found");
-                }
-        }
-
         /**
-         * Reads a file and converts the text to string
+         * Reads a file line by line and converts the text to string
+         * Maintains the line breaks if {@code keepLineBreak} is true
          * 
          * @param inputFile     file path of file being encrypted
          * @param keepLineBreak determines if line breaks from file should be maintained
          * @return String of file text
          */
         private static String fileToString(String inputFile, boolean keepLineBreak) {
-                String fileString = "";
+                String fileAsString = "";
                 try (BufferedReader reader = new BufferedReader(new FileReader(
                                 inputFile))) {
                         String line = "";
                         while ((line = reader.readLine()) != null) {
-                                fileString += line;
+                                fileAsString += line;
                                 // if line is not empty ,and maintaining line breaks, adds line to string
                                 if (keepLineBreak && line.length() > 0) {
-                                        fileString += "\n";
+                                        fileAsString += "\n";
                                 }
 
                         }
                 } catch (IOException e) {
                         System.out.println("Error while reading file");
                 }
-                return fileString;
+                return fileAsString;
         }
 
         /**
-         * Converts a plain text String into a binary String,
-         * does this by converting each {@char} in the String to its binary equivilant.
-         * Uses a scanner to read the text line by line and then adds the
-         * {@string "00001010"} to the binary text if there is another line which is
-         * new line in unicode
+         * Converts a plain text {@code text} String into a binary String,
+         * does this by converting each {@char} in the String to its binary equivilant
+         * and then adding the {@code charBinary} to {@code binaryString}
+         * 
+         * Some {@char} have a leading 0 which is removed by
+         * {@code Integer.toBinaryString} To fix this, leading 0s are re-added while the
+         * length of the chars binary is less than 8.
+         * 
+         * Uses {@code textScanner} to read the text line by line and then adds the
+         * {@String "00001010"} (new line in unicode) to the binary text when
+         * - The current line being read ends, and
+         * - There are more lines remaining in {@code text}
          * 
          * @param text String being converted to binary
          * @return Binary equivilant of input
@@ -251,20 +219,17 @@ class CipherMethods {
                 Scanner textScanner = new Scanner(text);
                 String line = textScanner.nextLine();
                 while (line != null) {
-                        // loops through each char in the line
                         for (int i = 0; i < line.length(); i++) {
-                                // convert char to binary
-                                String currentCharBinary = Integer.toBinaryString(line.charAt(i));
+                                String charBinary = Integer.toBinaryString(line.charAt(i));
 
-                                // add leading 0s to char binary string if needed to make it 8 bytes
-                                while (currentCharBinary.length() < 8) {
-                                        currentCharBinary = "0" + currentCharBinary;
+                                while (charBinary.length() < 8) {
+                                        charBinary = "0" + charBinary; // re-add leading 0's
                                 }
-                                binaryString += currentCharBinary; // adds each character to the binary string
+
+                                binaryString += charBinary;
                         }
-                        // adds next line charachter and sets next line
                         if (textScanner.hasNextLine()) {
-                                binaryString += "00001010";
+                                binaryString += "00001010"; // add new line binary
                                 line = textScanner.nextLine();
                         } else {
                                 line = null;
@@ -272,6 +237,36 @@ class CipherMethods {
                 }
                 textScanner.close();
                 return binaryString;
+        }
+
+        /**
+         * Converts a binary String into plain text
+         * Gets 8 bit substrings {@code currentChar}
+         * from the front of {@code binaryText}
+         * Checks to see if {@code currentChar} is padding and if so removed it
+         * Otherwise converts the binary of that string into a {@char}
+         * using {@code (char) Integer.parseInt(currentChar, 2)}
+         * Adds the {@char} to {@code plainText}
+         * Repeats until all plain text is decoded the returns the {@code plainText}
+         * 
+         * @param binaryText binary String being converted to chars
+         * @return plain text String
+         */
+        private static String binaryToText(String binaryText) {
+                String plainText = "";
+                while (binaryText.length() > 7) {
+                        String currentChar = binaryText.substring(0, 8);
+
+                        if (currentChar.equals("00000000")) {// check for padding
+                                binaryText = binaryText.substring(8);
+                        } else {
+                                char nextCharacter = (char) Integer.parseInt(currentChar, 2);
+                                plainText += nextCharacter;
+
+                                binaryText = binaryText.substring(8); // cut out that chunk from binaryText
+                        }
+                }
+                return plainText;
         }
 
         /**
