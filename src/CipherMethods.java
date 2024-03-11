@@ -19,6 +19,26 @@ class CipherMethods {
                         writeBlocks(inputFilePath, Blocks); // write the encrypted blocks to the output file
                 }
 
+                public void encryption(String longBinaryInput, String inputKey) {
+                        ArrayList<String> Blocks = new ArrayList<>();
+                        while (longBinaryInput.length() > 7) {
+                                Blocks.add(longBinaryInput.substring(0, 8));
+                                longBinaryInput = longBinaryInput.substring(8);
+                        }
+                        if (longBinaryInput.length() > 0 && longBinaryInput.length() < 8) {
+                                while (longBinaryInput.length() < 8) {
+                                        // pad end with 0s
+                                        longBinaryInput += 0;
+                                }
+                                Blocks.add(longBinaryInput);
+                        }
+
+                        Blocks.replaceAll(n -> encryptBlock(n, inputKey));
+                        for (String b : Blocks) {
+                                System.out.println(b);
+                        }
+                }
+
                 // takes plain text and breaks it into 64 bit blocks
                 private static ArrayList<String> createBlocks(String inputFilePath) {
                         ArrayList<String> Blocks = new ArrayList<String>();
@@ -123,6 +143,26 @@ class CipherMethods {
                         writeDecryptedBlocks(outputText, inputFilePath);
                         // Convert the decrypted binary into text
                         // Write decrypted binary to file
+                }
+
+                public void decryption(String longBinaryInput, String inputKey) {
+                        ArrayList<String> Blocks = new ArrayList<>();
+                        while (longBinaryInput.length() > 7) {
+                                Blocks.add(longBinaryInput.substring(0, 8));
+                                longBinaryInput = longBinaryInput.substring(8);
+                        }
+                        if (longBinaryInput.length() > 0 && longBinaryInput.length() < 8) {
+                                while (longBinaryInput.length() < 8) {
+                                        // pad end with 0s
+                                        longBinaryInput += 0;
+                                }
+                                Blocks.add(longBinaryInput);
+                        }
+
+                        Blocks.replaceAll(n -> decryptBlock(n, inputKey));
+                        for (String b : Blocks) {
+                                System.out.println(b);
+                        }
                 }
 
                 private ArrayList<String> createBlocks(String inputFilePath) {
