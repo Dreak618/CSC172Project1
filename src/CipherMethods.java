@@ -10,6 +10,7 @@ import java.util.ArrayList;
 class CipherMethods {
         protected static class Encrypter {
                 public Encrypter(String inputFilePath, String inputKey) {
+
                         ArrayList<String> Blocks = createBlocks(inputFilePath);
                         // take the file and break it into blocks (64 bits each) so they can be
                         // encrypted
@@ -19,31 +20,39 @@ class CipherMethods {
                         writeBlocks(inputFilePath, Blocks); // write the encrypted blocks to the output file
                 }
 
-                public void encryption(String longBinaryInput, String inputKey) {
+                public static String encryption(String longBinaryInput, String inputKey) throws IOException {
+                        // Create list of blocks
                         ArrayList<String> Blocks = new ArrayList<>();
-                        while (longBinaryInput.length() > 7) {
-                                Blocks.add(longBinaryInput.substring(0, 8));
-                                longBinaryInput = longBinaryInput.substring(8);
-                        }
-                        if (longBinaryInput.length() > 0 && longBinaryInput.length() < 8) {
-                                while (longBinaryInput.length() < 8) {
-                                        // pad end with 0s
-                                        longBinaryInput += 0;
+                        // breaks the longBinaryInput into blocks of 64 bits
+                        while (longBinaryInput.length() > 0) {
+                                // Pads final block with 0s if it is smaller than 64 bits
+                                if (longBinaryInput.length() < 64) {
+                                        while (longBinaryInput.length() < 64) {
+                                                longBinaryInput += "0";
+                                        }
                                 }
-                                Blocks.add(longBinaryInput);
+                                // adds each block to list, moves on to next while possible
+                                Blocks.add(longBinaryInput.substring(0, 64));
+                                longBinaryInput = longBinaryInput.substring(64);
                         }
-
+                        // encrypt all the blocks
                         Blocks.replaceAll(n -> encryptBlock(n, inputKey));
+                        String encryped = "";
+                        // combine all blocks into 1 big string
                         for (String b : Blocks) {
-                                System.out.println(b);
+                                encryped += b;
                         }
+                        // returns the encrypted long binary input
+                        return encryped;
                 }
 
                 // takes plain text and breaks it into 64 bit blocks
                 private static ArrayList<String> createBlocks(String inputFilePath) {
                         ArrayList<String> Blocks = new ArrayList<String>();
                         // Create a buffered file reader
-                        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
+                        System.out.println(inputFilePath);
+                        try (BufferedReader reader = new BufferedReader(new FileReader(
+                                        inputFilePath))) {
                                 String binaryLine = "";
                                 String line = "";
                                 // Takes every line in the file and converts the plain-text into 64bit blocks
@@ -145,24 +154,30 @@ class CipherMethods {
                         // Write decrypted binary to file
                 }
 
-                public void decryption(String longBinaryInput, String inputKey) {
+                public static String decryption(String longBinaryInput, String inputKey) throws IOException {
+                        // Create list of blocks
                         ArrayList<String> Blocks = new ArrayList<>();
-                        while (longBinaryInput.length() > 7) {
-                                Blocks.add(longBinaryInput.substring(0, 8));
-                                longBinaryInput = longBinaryInput.substring(8);
-                        }
-                        if (longBinaryInput.length() > 0 && longBinaryInput.length() < 8) {
-                                while (longBinaryInput.length() < 8) {
-                                        // pad end with 0s
-                                        longBinaryInput += 0;
+                        // breaks the longBinaryInput into blocks of 64 bits
+                        while (longBinaryInput.length() > 0) {
+                                // Pads final block with 0s if it is smaller than 64 bits
+                                if (longBinaryInput.length() < 64) {
+                                        while (longBinaryInput.length() < 64) {
+                                                longBinaryInput += "0";
+                                        }
                                 }
-                                Blocks.add(longBinaryInput);
+                                // adds each block to list, moves on to next while possible
+                                Blocks.add(longBinaryInput.substring(0, 64));
+                                longBinaryInput = longBinaryInput.substring(64);
                         }
-
+                        // decrypt all the blocks
                         Blocks.replaceAll(n -> decryptBlock(n, inputKey));
+                        String decrypted = "";
+                        // combine all blocks into 1 big string
                         for (String b : Blocks) {
-                                System.out.println(b);
+                                decrypted += b;
                         }
+                        // returns the decrypted long binary input
+                        return decrypted;
                 }
 
                 private ArrayList<String> createBlocks(String inputFilePath) {

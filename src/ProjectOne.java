@@ -7,10 +7,9 @@ import java.util.Scanner;
 public class ProjectOne {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-
         runTests(); // run test cases
-        Scanner s = new Scanner(System.in);
 
+        Scanner s = new Scanner(System.in);
         // get file path, desired mode, and key from user using scanner
         System.out.print("Enter File Name: ");
         String inputFile = s.nextLine();
@@ -19,7 +18,8 @@ public class ProjectOne {
         System.out.print("Do you want to encrypt or decrypt (E/D): ");
         String ED = s.next();
 
-        if (ED.equals("E")) { // runs method to encrypt/decrypt based on user input
+        // runs method to encrypt/decrypt based on user input
+        if (ED.equals("E")) {
             encryption(inputFile, inputKey);
         } else if (ED.equals("D")) {
             decryption(inputFile, inputKey);
@@ -27,12 +27,23 @@ public class ProjectOne {
         s.close();
     }
 
-    // creates a new instance of an encrypter or decrypter to encrypt/decrypt the
-    // given file
+    /**
+     * Constructs a {@code CipherMethods.Encrypter} to encrypt a file
+     * 
+     * @param inputFilePath file path
+     * @param inputKey      encryption key
+     * 
+     */
     private static void encryption(String inputFilePath, String inputKey) {
         new CipherMethods.Encrypter(inputFilePath, inputKey);
     }
 
+    /**
+     * Constructs a {@code CipherMethods.Decrypter()} to decrypt a file
+     * 
+     * @param inputFilePath file path
+     * @param inputKey      decryption key
+     */
     private static void decryption(String inputFilePath, String inputKey) {
         new CipherMethods.Decrypter(inputFilePath, inputKey);
     }
@@ -45,6 +56,15 @@ public class ProjectOne {
         String block1 = "1100110010000000000001110101111100010001100101111010001001001100"; // 64 bit
         String block2 = "0101011010001110111001000111100001001110010001100110000011110101"; // 64 bit
         String block3 = "0011000101110111011100100101001001001101011010100110011111010111"; // 64 bit
+
+        /*
+         * 192 bit long binary input not used currently in test but can be used by
+         * CipherMethods.Encrypter.encryption(longBinaryInput, inputKey); or
+         * CipherMethods.Decrypter.decryption(longBinaryEncrypted, inputKey);
+         * to encrypt a long binary input rather than just encrypting one block or a
+         * whole file at once
+         */
+        String longBinaryInput = "110011001000000000000111010111110001000110010111101000100100110001010110100011101110010001111000010011100100011001100000111101010011000101110111011100100101001001001101011010100110011111010111";
 
         System.out.println("Running Tests:");
         System.out.println("Output for: encryption (all ones, all ones)");
