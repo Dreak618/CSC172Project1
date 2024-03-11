@@ -9,264 +9,197 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Super class containing all methods used to encrypt and decrypt
- * contains {@code Encrypter} and {@code Decrypter}
+ * Class containing all methods used to encrypt and decrypt
  */
 class CipherMethods {
-        protected static class Encrypter {
-                /**
-                 * Constructs a {@code Encrypter} which takes a file and input key,
-                 * reads the file {@see CipherMethods.fileToString},
-                 * turns the plain text into binary {@see CipherMethods.textToBinary}
-                 * encrypts the binary {@see encryption}
-                 * and then writes the encrypted binary to a new file
-                 * {@see CipherMethods.writeText}
-                 * 
-                 * @param inputFile file being encrypted
-                 * @param inputKey  key used for encryption
-                 */
 
-                public Encrypter(String inputFile, String inputKey) {
-                        String fileAsString = fileToString(inputFile, true);
-                        String fileAsBinaryString = textToBinary(fileAsString);
-                        String encryptedBinary = encryption(fileAsBinaryString, inputKey);
-                        writeText(inputFile, encryptedBinary, "E"); // write the encrypted blocks to the output file
-                }
+        /**
+         * Encrypts a provided file by:
+         * - Reading the file {@see fileToString},
+         * - Turning the plain text into binary {@see textToBinary}
+         * - Encrypting the binary {@see encryption}
+         * Then writes the encrypted binary to a new file {@see writeText}
+         * 
+         * @param inputFile file being encrypted
+         * @param inputKey  key used for encryption
+         */
 
-                /**
-                 * Encrypts a long binary string by
-                 * first breaking it into blocks {@see CipherMethods.createBlocks}
-                 * then encrypting blocks using {@code encryptBlock}
-                 * 
-                 * @param longBinaryInput binary string being encrypted
-                 * @param inputKey        key used for encryption
-                 * @return encrypted text
-                 */
-                public static String encryption(String longBinaryInput, String inputKey) {
-                        // create blocks
-                        ArrayList<String> Blocks = createBlocks(longBinaryInput);
-
-                        // encrypt all the blocks
-                        Blocks.replaceAll(n -> encryptBlock(n, inputKey));
-
-                        // combine all blocks into 1 big string
-                        String encryped = "";
-                        for (String b : Blocks) {
-                                encryped += b;
-                        }
-                        // returns the encrypted long binary input
-                        return encryped;
-                }
-
-                /**
-                 * Encrypts a block which is a 64 bit binary String
-                 * Splits the block into 2 using {@see CipherMethods.splitIt}
-                 * 
-                 * Then does the following 10 times:
-                 * Adjust key using {@see CipherMethods.keyScheduleTransform},
-                 * Apply {@see CipherMethods.functionF} to one half of the block
-                 * xOrs both halfs {@see CipherMethods.xorIt}
-                 * Swaps the 2 halfs
-                 * 
-                 * Finaly, combines 2 halfs together to form the encrypted block
-                 * 
-                 * @param block    String being encrypted
-                 * @param inputKey key used for encryption
-                 * @return encrypted block
-                 */
-                protected static String encryptBlock(String block, String inputKey) {
-                        // Split Block into 2
-                        String[] split = splitIt(block);
-                        String L = split[0];
-                        String R = split[1];
-                        String temp; // temp variable used to swap L,R halves after each iteration
-
-                        for (int i = 0; i < 10; i++) {
-                                inputKey = keyScheduleTransform(inputKey);
-                                temp = functionF(R, inputKey.substring(0, 32));
-                                L = xorIt(temp, L);
-
-                                temp = L;
-                                L = R;
-                                R = temp;
-                        }
-                        return L + R;
-                }
+        public static void encryptFile(String inputFile, String inputKey) {
+                String fileAsString = fileToString(inputFile, true);
+                String fileAsBinaryString = textToBinary(fileAsString);
+                String encryptedBinary = encryption(fileAsBinaryString, inputKey);
+                writeText(inputFile, encryptedBinary, "E"); // write the encrypted blocks to the output file
         }
 
-        protected static class Decrypter {
-                public Decrypter(String inputFile, String inputKey) {
-                        ArrayList<String> Blocks = createBlocks(inputFile);
-                        String outputText = "";
-                        createBlocks(inputFile);
-                        for (String block : Blocks) {
-                                block = decryptBlock(block, inputKey);
-                                block = binaryToText(block);
-                                outputText += block;
+        /**
+         * Encrypts a long binary string by:
+         * - First breaking it into blocks {@see createBlocks}
+         * - Then encrypting blocks using {@code encryptBlock}
+         * Then combines all blocks together and returns them
+         * 
+         * @param longBinaryInput binary string being encrypted
+         * @param inputKey        key used for encryption
+         * @return encrypted text
+         */
+        public static String encryption(String longBinaryInput, String inputKey) {
+                ArrayList<String> Blocks = createBlocks(longBinaryInput);
+
+                // encrypt all the blocks
+                Blocks.replaceAll(n -> encryptBlock(n, inputKey));
+
+                // combine block
+                String encrypedBinary = "";
+                for (String b : Blocks) {
+                        encrypedBinary += b;
+                }
+
+                return encrypedBinary;
+        }
+
+        /**
+         * Encrypts a block which is a 64 bit binary String
+         * Splits the block into 2 using {@see splitIt}
+         * 
+         * Then does the following 10 times:
+         * Adjust key using {@see keyScheduleTransform},
+         * Apply {@see functionF} to one half of the block
+         * xOrs both halfs {@see xorIt}
+         * Swaps the 2 halfs
+         * 
+         * Finaly, combines 2 halfs together to form the encrypted block
+         * 
+         * @param block    String being encrypted
+         * @param inputKey key used for encryption
+         * @return encrypted block
+         */
+        public static String encryptBlock(String block, String inputKey) {
+                // Split Block into 2
+                String[] split = splitIt(block);
+                String L = split[0];
+                String R = split[1];
+                String temp; // temp variable used to swap L and R
+
+                for (int i = 0; i < 10; i++) {
+                        inputKey = keyScheduleTransform(inputKey);
+                        temp = functionF(R, inputKey.substring(0, 32));
+                        L = xorIt(temp, L);
+
+                        temp = L;
+                        L = R;
+                        R = temp;
+                }
+
+                return L + R;
+        }
+
+        /**
+         * Constructs a {@code Decrypter} which takes a file and input key,
+         * reads the file {@see fileToString},
+         * turns the plain text into binary {@see textToBinary}
+         * encrypts the binary {@see encryption}
+         * and then writes the encrypted binary to a new file
+         * {@see writeText}
+         * 
+         * @param inputFile file being encrypted
+         * @param inputKey  key used for encryption
+         */
+        public static void decryptFile(String inputFile, String inputKey) {
+                String fileAsBinaryString = fileToString(inputFile, false);
+                String decryptedString = decryption(fileAsBinaryString, inputKey);
+                String binaryAsText = binaryToText(decryptedString);
+                writeDecryptedBlocks(binaryAsText, inputFile);
+        }
+
+        public static String decryption(String longBinaryInput, String inputKey) {
+                // Create list of blocks
+                ArrayList<String> Blocks = createBlocks(longBinaryInput);
+                Blocks.replaceAll(n -> decryptBlock(n, inputKey));
+                String decrypted = "";
+                // combine all blocks into 1 big string
+                for (String b : Blocks) {
+                        decrypted += b;
+                }
+                // returns the decrypted long binary input
+                return decrypted;
+        }
+
+        public static String decryptBlock(String block, String inputKey) {
+                String[] split = splitIt(block);
+                String L = split[0];
+                String R = split[1];
+                String temp; // temp variable used to swap L,R halves after each iteration
+                for (int i = 0; i < 10; i++) {
+                        inputKey = keyScheduleTransform(inputKey); // set starting key
+                } // (starting key must be last key used in encryption)
+                for (int i = 0; i < 10; i++) {
+                        temp = L; // swap L, R
+                        L = R;
+                        R = temp;
+                        // xOrs the result of the function with the left half to create the new left
+                        // half
+                        L = xorIt(functionF(R, inputKey.substring(0, 32)), L);
+                        inputKey = keyScheduleTransformUndo(inputKey); // transforms key for next round
+                } // specifically uses Decrypter's KST here
+                return L + R;
+        }
+
+        // converts binary into plain-text
+        private static String binaryToText(String binaryText) {
+                String plainText = "";
+                // chars are in 8 bit chunks and loops until there are no chunks left
+                while (binaryText.length() > 7) {
+                        // gets current 8 bit chunck of binary text
+                        String currentChar = binaryText.substring(0, 8);
+                        // checks if current chunk is padding, if it is cuts it out
+                        if (currentChar.equals("00000000")) {
+                                binaryText = binaryText.substring(8);
+                        } else {
+                                // convert binrary chunk to char and add it to plainText String
+                                char nextCharacter = (char) Integer.parseInt(currentChar, 2);
+                                plainText += nextCharacter;
+
+                                // cut out that chunk from the binary string
+                                binaryText = binaryText.substring(8);
                         }
-                        writeDecryptedBlocks(outputText, inputFile);
-                        // Convert the decrypted binary into text
-                        // Write decrypted binary to file
                 }
+                return plainText;
+        }
 
-                public static String decryption(String longBinaryInput, String inputKey) throws IOException {
-                        // Create list of blocks
-                        ArrayList<String> Blocks = new ArrayList<>();
-                        // breaks the longBinaryInput into blocks of 64 bits
-                        while (longBinaryInput.length() > 0) {
-                                // Pads final block with 0s if it is smaller than 64 bits
-                                if (longBinaryInput.length() < 64) {
-                                        while (longBinaryInput.length() < 64) {
-                                                longBinaryInput += "0";
-                                        }
-                                }
-                                // adds each block to list, moves on to next while possible
-                                Blocks.add(longBinaryInput.substring(0, 64));
-                                longBinaryInput = longBinaryInput.substring(64);
-                        }
-                        // decrypt all the blocks
-                        Blocks.replaceAll(n -> decryptBlock(n, inputKey));
-                        String decrypted = "";
-                        // combine all blocks into 1 big string
-                        for (String b : Blocks) {
-                                decrypted += b;
-                        }
-                        // returns the decrypted long binary input
-                        return decrypted;
-                }
+        // write decrypted text to a new file
+        private static void writeDecryptedBlocks(String text, String inputFile) {
+                // create file for decrypted text
+                File decryptedFile = new File(inputFile.substring(0, inputFile.length() - 5) + "D.txt");
+                String decryptPath = decryptedFile.getAbsolutePath();
 
-                private ArrayList<String> createBlocks(String inputFile) {
-                        ArrayList<String> Blocks = new ArrayList<String>();
-                        // Create a buffered file reader
-                        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
-                                String line = "";
-                                String blockLine = "";
-                                // Takes every line in the file and converts the plain-text into 64bit binary
-                                // blocks
-                                while ((line = reader.readLine()) != null) {
-                                        blockLine += line;
-                                } // chunks written info back into blocks for decryption
-                                while (blockLine.length() > 0) {
-                                        Blocks.add(blockLine.substring(0, 64));
-                                        blockLine = blockLine.substring(64);
-                                }
-
-                                reader.close();
-                        } catch (IOException e) {
-                                System.out.println("Error reading file while encrypting");
-                        }
-                        return Blocks;
-                }
-
-                protected static String decryptBlock(String block, String inputKey) {
-                        String[] split = CipherMethods.splitIt(block);
-                        String L = split[0];
-                        String R = split[1];
-                        String temp; // temp variable used to swap L,R halves after each iteration
-                        for (int i = 0; i < 10; i++) {
-                                inputKey = keyScheduleTransform(inputKey); // set starting key
-                        } // (starting key must be last key used in encryption)
-                        for (int i = 0; i < 10; i++) {
-                                temp = L; // swap L, R
-                                L = R;
-                                R = temp;
-                                // xOrs the result of the function with the left half to create the new left
-                                // half
-                                L = xorIt(functionF(R, inputKey.substring(0, 32)), L);
-                                inputKey = keyScheduleTransformUndo(inputKey); // transforms key for next round
-                        } // specifically uses Decrypter's KST here
-                        return L + R;
-                }
-
-                // converts binary into plain-text
-                protected static String binaryToText(String binaryText) {
-                        String plainText = "";
-                        // chars are in 8 bit chunks and loops until there are no chunks left
-                        while (binaryText.length() > 7) {
-                                // gets current 8 but chunck of binary text
-                                String currentChar = binaryText.substring(0, 8);
-                                // checks if that chunk of binary text is padding
-                                if (currentChar.equals("00000000")) {
-                                        // if it is cuts out the padding
-                                        if (binaryText.length() > 7) { // so it doesnt break if last char is "00000000"
-                                                binaryText = binaryText.substring(8);
-                                        }
-                                }
-
-                                // else if (currentChar.equals("11111111")) {
-                                // // if read new line marker add new line
-                                // plainText = plainText + "\n";
-                                // binaryText = binaryText.substring(8);
-
-                                // }
-                                else {
-                                        // if not, get the character associated with the given binary value
-                                        char nextCharacter = (char) Integer.parseInt(currentChar, 2);
-                                        // adds that character to plain text string
-                                        plainText += nextCharacter;
-                                        // cut out that character from the binary string
-                                        binaryText = binaryText.substring(8);
-                                }
-                        }
-                        return plainText;
-                }
-
-                // write decrypted text to a new file
-                protected static void writeDecryptedBlocks(String text, String inputFile) {
-                        // create file for decrypted text
-                        File decryptedFile = new File(inputFile.substring(0, inputFile.length() - 5) + "D.txt");
-                        String decryptPath = decryptedFile.getAbsolutePath();
-
-                        // write decrypted text to file
-                        try (FileWriter writer = new FileWriter(decryptPath)) {
-                                writer.write(text);
-                                writer.close();
-                        } catch (IOException e) {
-                                System.out.println("no file found");
-                        }
-                }
-
-                // overrides CM.shiftIt()
-                private static String shiftIt(String binaryinput) { //
-                        StringBuilder sb = new StringBuilder(binaryinput.length());
-                        sb.append(binaryinput.charAt(binaryinput.length() - 1)); // adds the last character first
-                        for (int i = 0; i < binaryinput.length() - 1; i++) {
-                                sb.append(binaryinput.charAt(i)); // then adds the rest of the chars in order
-                        } // effectively applies right shift by 1 to string
-                        return sb.toString();
-                }
-
-                // this one uses a right shift to generate the keys in reverse order, overrides
-                // CM.kst()
-                private static String keyScheduleTransformUndo(String inputkey) {
-                        String C = shiftIt(splitIt(inputkey)[0]);
-                        String D = shiftIt(splitIt(inputkey)[1]);
-                        return C + D;
+                // write decrypted text to file
+                try (FileWriter writer = new FileWriter(decryptPath)) {
+                        writer.write(text);
+                        writer.close();
+                } catch (IOException e) {
+                        System.out.println("no file found");
                 }
         }
 
         /**
          * Reads a file and converts the text to string
-         * stores new lines as {@string "11111111"}
          * 
-         * @param inputFile file path of file being encrypted
-         * @param readLines determines if lines from file should be maintined
+         * @param inputFile     file path of file being encrypted
+         * @param keepLineBreak determines if line breaks from file should be maintained
          * @return String of file text
          */
-        private static String fileToString(String inputFile, boolean readLines) {
-                String fileString = ""; // String of text of file
+        private static String fileToString(String inputFile, boolean keepLineBreak) {
+                String fileString = "";
                 try (BufferedReader reader = new BufferedReader(new FileReader(
                                 inputFile))) {
-                        String line = ""; // current line of file
+                        String line = "";
                         while ((line = reader.readLine()) != null) {
                                 fileString += line;
-                                // if line is not empty and reading lines is true adds line to string
-                                if (readLines && line.length() > 0) {
+                                // if line is not empty ,and maintaining line breaks, adds line to string
+                                if (keepLineBreak && line.length() > 0) {
                                         fileString += "\n";
                                 }
 
                         }
-                        System.out.println(fileString);
                 } catch (IOException e) {
                         System.out.println("Error while reading file");
                 }
@@ -396,16 +329,6 @@ class CipherMethods {
                 return xOr.toString();
         }
 
-        private static String shiftIt(String binaryinput) { // Left shift by 1
-                StringBuilder sb = new StringBuilder(binaryinput.length());
-                char e1 = binaryinput.charAt(0); // holds on to first character
-                for (int i = 1; i < binaryinput.length(); i++) {
-                        sb.append(binaryinput.charAt(i)); // adds other chars to result
-                }
-                sb.append(e1); // adds first char to end (effectively Left shift by one)
-                return sb.toString();
-        }
-
         private static String permuteIt(String binaryinput) {
                 int[] p = { 16, 7, 20, 21, 29, 12, 28, 17, 1, 15,
                                 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
@@ -423,7 +346,7 @@ class CipherMethods {
                 // pieces, does lookup in s-table for each, then concatenates those, permutes
                 // using permutation box P
                 String result = rightHalf;
-                result = CipherMethods.xorIt(rightHalf, subkey.substring(0, 32)); // round key must be 32 bits
+                result = xorIt(rightHalf, subkey.substring(0, 32)); // round key must be 32 bits
                 result = substitutionS(result);
                 result = permuteIt(result);
                 return result;
@@ -433,6 +356,33 @@ class CipherMethods {
                 String C = shiftIt(splitIt(inputkey)[0]);
                 String D = shiftIt(splitIt(inputkey)[1]);
                 return C + D;
+        }
+
+        private static String shiftIt(String binaryinput) { // Left shift by 1
+                StringBuilder sb = new StringBuilder(binaryinput.length());
+                char e1 = binaryinput.charAt(0); // holds on to first character
+                for (int i = 1; i < binaryinput.length(); i++) {
+                        sb.append(binaryinput.charAt(i)); // adds other chars to result
+                }
+                sb.append(e1); // adds first char to end (effectively Left shift by one)
+                return sb.toString();
+        }
+
+        // this one uses a right shift to generate the keys in reverse order, overrides
+        // CM.kst()
+        private static String keyScheduleTransformUndo(String inputkey) {
+                String C = shiftItUndo(splitIt(inputkey)[0]);
+                String D = shiftItUndo(splitIt(inputkey)[1]);
+                return C + D;
+        }
+
+        private static String shiftItUndo(String binaryinput) { //
+                StringBuilder sb = new StringBuilder(binaryinput.length());
+                sb.append(binaryinput.charAt(binaryinput.length() - 1)); // adds the last character first
+                for (int i = 0; i < binaryinput.length() - 1; i++) {
+                        sb.append(binaryinput.charAt(i)); // then adds the rest of the chars in order
+                } // effectively applies right shift by 1 to string
+                return sb.toString();
         }
 
         private static String[][] sTable = new String[][] { // the S-Table
