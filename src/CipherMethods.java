@@ -198,10 +198,10 @@ class CipherMethods {
 
         /**
          * Converts a plain text {@code text} String into a binary String,
-         * does this by converting each {@char} in the String to its binary equivilant
+         * does this by converting each char in the String to its binary equivilant
          * and then adding the {@code charBinary} to {@code binaryString}
          * 
-         * Some {@char} have a leading 0 which is removed by
+         * Some chars have a leading 0 which is removed by
          * {@code Integer.toBinaryString} To fix this, leading 0s are re-added while the
          * length of the chars binary is less than 8.
          * 
@@ -244,9 +244,9 @@ class CipherMethods {
          * Gets 8 bit substrings {@code currentChar}
          * from the front of {@code binaryText}
          * Checks to see if {@code currentChar} is padding and if so removed it
-         * Otherwise converts the binary of that string into a {@char}
+         * Otherwise converts the binary of that string into a char
          * using {@code (char) Integer.parseInt(currentChar, 2)}
-         * Adds the {@char} to {@code plainText}
+         * Adds the char to {@code plainText}
          * Repeats until all plain text is decoded the returns the {@code plainText}
          * 
          * @param binaryText binary String being converted to chars
@@ -313,13 +313,31 @@ class CipherMethods {
                 }
         }
 
+        /**
+         * Takes a 32 bit {@code String binaryInput}, breaks it into 4 8 bit substrings
+         * {@code s1,s2,s3,s4}.
+         * For each substring:
+         * - Breaks it into 2
+         * - Use {@code Integer.parseInt} to get the integer value of each half
+         * - Sets {@code row} to be the integer value of the first half
+         * - Sets {@code column} to be the integer value of the second half
+         * - use the lookup table {@code sTable} and replaces the initial substring with
+         * the string in position {@code row},{@code column}
+         * - after replacing the substring with its corresponding value in
+         * {@code sTable} uses {@code StringBuilder result} to concatinate the new
+         * string with the others.
+         * Returns this concatinated string
+         * 
+         * @param binaryInput String that will be replaced with values in {@code sTable}
+         * @return replaces String
+         */
         private static String substitutionS(String binaryInput) {
                 int l = binaryInput.length();
 
-                StringBuilder result = new StringBuilder(binaryInput.length()); // makes stringbuilder for output
+                StringBuilder result = new StringBuilder(binaryInput.length());
                 String s1 = binaryInput.substring(0, l / 4), s2 = binaryInput.substring(l / 4, l / 2),
                                 s3 = binaryInput.substring(l / 2, 3 * l / 4), s4 = binaryInput.substring(3 * l / 4, l);
-                String[] splits = { s1, s2, s3, s4 }; // splits input into 4 8-bit strings
+                String[] splits = { s1, s2, s3, s4 };
                 for (String s : splits) { // computes output of each string individually by looking up row/column
                                           // indices
                         int row = Integer.parseInt(s.substring(0, 4), 2);
@@ -329,83 +347,151 @@ class CipherMethods {
                 return result.toString(); // returns outputs (concatenated)
         }
 
-        // split block into 2
-        private static String[] splitIt(String block) {
-                int length = block.length();
+        /**
+         * Split {@code input} into 2 substrings of equal size
+         * Returns an array of both halfs
+         * 
+         * @param input String being split
+         * @return Array with position 0 being the left half of {@code input}
+         *         and position 1 being the right
+         */
+        private static String[] splitIt(String input) {
+                int length = input.length();
                 // break string into 2 equal parts
-                String L = block.substring(0, length / 2);
-                String R = block.substring(length / 2, length);
+                String L = input.substring(0, length / 2);
+                String R = input.substring(length / 2, length);
                 // put 2 parts into array
                 String[] split = { L, R };
                 // return array
                 return split;
         }
 
-        private static String xorIt(String binary1, String binary2) { // binary2 is the round key ki
+        /**
+         * xOr's {@code binary1} and {@code binary2} one char at a time
+         * If the char in {@code binary1} and {@code binary2} is the same
+         * adds a 0 to result string
+         * Otherise adds a 1 to the result string
+         * 
+         * @param binary1 first binary String
+         * @param binary2 second binary String
+         * @return String created by xOr of 2 strings
+         */
+        private static String xorIt(String binary1, String binary2) {
                 StringBuilder xOr = new StringBuilder(binary1.length());
                 for (int i = 0; (i < binary1.length() && i < binary2.length()); i++) {
-                        if (binary1.charAt(i) == binary2.charAt(i)) { // if same value, then XOR is false
+                        if (binary1.charAt(i) == binary2.charAt(i)) {
                                 xOr.append(0);
                         } else {
-                                xOr.append(1); // otherwise XOR is true
+                                xOr.append(1);
                         }
                 }
                 return xOr.toString();
         }
 
-        private static String permuteIt(String binaryinput) {
+        /**
+         * Takes an 32 bit input {@code String binaryInput} and creates a new String
+         * getting the values in the {@code p} box, subtracting 1 (since p starts at one
+         * but positions start at 0) and the adding the char in that position in
+         * {@code binaryInput} to a new {@code StringBuilder sb}, finaly returns
+         * rearranged String {@code sb.toString}
+         * 
+         * @param binaryInput String being read
+         * @return permuted String
+         */
+        private static String permuteIt(String binaryInput) {
                 int[] p = { 16, 7, 20, 21, 29, 12, 28, 17, 1, 15,
                                 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27,
                                 3, 9, 19, 13, 30, 6, 22, 11, 4, 25 }; // The given P-box
-                StringBuilder sb = new StringBuilder(binaryinput.length());
-                for (int i = 0; i < binaryinput.length(); i++) {
-                        sb.append(binaryinput.charAt(p[i] - 1));
-                        // adds the digit of b located at (the value of p[i] - 1)
-                } // -1 so we don't get array out of bounds error (p is 1-32 not 0-31)
+                StringBuilder sb = new StringBuilder(binaryInput.length());
+                for (int i = 0; i < binaryInput.length(); i++) {
+                        sb.append(binaryInput.charAt(p[i] - 1));
+                }
                 return sb.toString();
         }
 
-        private static String functionF(String rightHalf, String subkey) {
-                // round function: XORs right Half with subkey, then splits it into 4 8-bit
-                // pieces, does lookup in s-table for each, then concatenates those, permutes
-                // using permutation box P
-                String result = rightHalf;
-                result = xorIt(rightHalf, subkey.substring(0, 32)); // round key must be 32 bits
+        /**
+         * Does the bulk of the encryping/decrypting of the binary text each round of
+         * encryption/decryption
+         * 
+         * Takes a 32 bit binary String {@code binaryInput} and a 56 bit binary key
+         * {@code key}, sets {@code result} to the {@code xorIt(binaryInput,key)},
+         * Then applies {@code subsitutionS} to {@code result}
+         * Then applies {@code permuteIt} to {@code result} and returns the result
+         * 
+         * @param binaryInput the binary text being encrypted by {@code functionF}
+         * @param key         key used in the {@code xorIt}
+         * @return the alterned version of {@code binaryInput}
+         */
+        private static String functionF(String binaryInput, String key) {
+                String result = xorIt(binaryInput, key);
                 result = substitutionS(result);
                 result = permuteIt(result);
                 return result;
         }
 
+        /**
+         * Breaks {@code inputKey} in half and applies {@code shiftIt} to each half
+         * Combines the shifted Strings and returns them
+         * 
+         * @param inputkey String being split and shifted
+         * @return shifted input
+         */
         private static String keyScheduleTransform(String inputkey) {
                 String C = shiftIt(splitIt(inputkey)[0]);
                 String D = shiftIt(splitIt(inputkey)[1]);
                 return C + D;
         }
 
-        private static String shiftIt(String binaryinput) { // Left shift by 1
-                StringBuilder sb = new StringBuilder(binaryinput.length());
-                char e1 = binaryinput.charAt(0); // holds on to first character
-                for (int i = 1; i < binaryinput.length(); i++) {
-                        sb.append(binaryinput.charAt(i)); // adds other chars to result
-                }
-                sb.append(e1); // adds first char to end (effectively Left shift by one)
-                return sb.toString();
-        }
-
-        // this one uses a right shift to generate the keys in reverse order, overrides
-        // CM.kst()
+        /**
+         * Breaks {@code inputKey} in half and applies {@code shiftItUndo} to each half
+         * Combines the shifted Strings and returns them
+         * 
+         * @param inputkey String being split and shifted
+         * @return shifted input
+         */
         private static String keyScheduleTransformUndo(String inputkey) {
                 String C = shiftItUndo(splitIt(inputkey)[0]);
                 String D = shiftItUndo(splitIt(inputkey)[1]);
                 return C + D;
         }
 
-        private static String shiftItUndo(String binaryinput) { //
-                StringBuilder sb = new StringBuilder(binaryinput.length());
-                sb.append(binaryinput.charAt(binaryinput.length() - 1)); // adds the last character first
-                for (int i = 0; i < binaryinput.length() - 1; i++) {
-                        sb.append(binaryinput.charAt(i)); // then adds the rest of the chars in order
-                } // effectively applies right shift by 1 to string
+        /**
+         * Takes a String {@code input} and shifts the char at the beginning to the
+         * end and moves all the other chars forward 1 spot
+         * 
+         * Does shift by creating a {@code StringBuilder sb} appending all but the first
+         * char in {@code input} to {@code sb} and then appending the first
+         * char {@code input.charAt(0)} to {@code sb}
+         * 
+         * @param input String being shifted
+         * @return shifted input
+         */
+        private static String shiftIt(String input) {
+                StringBuilder sb = new StringBuilder(input.length());
+                for (int i = 1; i < input.length(); i++) {
+                        sb.append(input.charAt(i));
+                }
+                sb.append(input.charAt(0));
+                return sb.toString();
+        }
+
+        /**
+         * Takes a String {@code input} and shifts the char at the end to the
+         * end and moves all the other chars back 1 spot
+         * 
+         * Does shift by creating a {@code StringBuilder sb} appending the last char in
+         * {@code input} to {@code sb} and then appending the rest of the chars in
+         * {@code input} to {@code sb}
+         * 
+         * @param input String being shifted
+         * @return shifted input
+         */
+        private static String shiftItUndo(String input) { //
+                StringBuilder sb = new StringBuilder(input.length());
+                sb.append(input.charAt(input.length() - 1));
+                for (int i = 0; i < input.length() - 1; i++) {
+                        sb.append(input.charAt(i));
+                }
                 return sb.toString();
         }
 
