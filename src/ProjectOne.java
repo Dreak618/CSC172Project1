@@ -85,7 +85,7 @@ public class ProjectOne {
      * @param inputFile file being encrypted
      * @param inputKey  key used for encryption
      */
-    public static void encryptFile(String inputFile, String inputKey) {
+    private static void encryptFile(String inputFile, String inputKey) {
         String fileAsString = fileToString(inputFile, true);
         String fileAsBinaryString = textToBinary(fileAsString);
         String encryptedBinary = encryption(fileAsBinaryString, inputKey);
@@ -102,7 +102,7 @@ public class ProjectOne {
      * @param inputKey        key used for encryption
      * @return encrypted text
      */
-    public static String encryption(String longBinaryInput, String inputKey) {
+    private static String encryption(String longBinaryInput, String inputKey) {
         ArrayList<String> Blocks = createBlocks(longBinaryInput); // List of 64 bit Strings
 
         Blocks.replaceAll(n -> encryptBlock(n, inputKey)); // Encrypt all blocks
@@ -132,7 +132,7 @@ public class ProjectOne {
      * @param inputKey key used for encryption
      * @return encrypted block
      */
-    public static String encryptBlock(String block, String inputKey) {
+    private static String encryptBlock(String block, String inputKey) {
         // Split Block into 2
         String[] split = splitIt(block);
         String L = split[0];
@@ -162,7 +162,7 @@ public class ProjectOne {
      * @param inputFile file being decrypted
      * @param inputKey  key used for decryption
      */
-    public static void decryptFile(String inputFile, String inputKey) {
+    private static void decryptFile(String inputFile, String inputKey) {
         String fileAsBinaryString = fileToString(inputFile, false);
         String decryptedString = decryption(fileAsBinaryString, inputKey);
         String binaryAsText = binaryToText(decryptedString);
@@ -179,7 +179,7 @@ public class ProjectOne {
      * @param inputKey        key used for decryption
      * @return decrypted text
      */
-    public static String decryption(String longBinaryInput, String inputKey) {
+    private static String decryption(String longBinaryInput, String inputKey) {
         ArrayList<String> Blocks = createBlocks(longBinaryInput); // List of 64 bit Strings
 
         Blocks.replaceAll(n -> decryptBlock(n, inputKey)); // Decrypt all blocks
@@ -210,7 +210,7 @@ public class ProjectOne {
      * @param inputKey key used for decryption
      * @return decrypted block
      */
-    public static String decryptBlock(String block, String inputKey) {
+    private static String decryptBlock(String block, String inputKey) {
         String[] split = splitIt(block);
         String L = split[0];
         String R = split[1];
