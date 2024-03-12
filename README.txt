@@ -32,9 +32,8 @@ Decrypts binary block by block
 Outputs decrypted block with same formatting as original
 
 Well encapsulated so that individual function methods cannot be accessed from outside the package
-Encrypter/Decrypter located inside central CipherMethods class to avoid redundancy
 
-As part of encrypter/decrypter, the program has methods for encrypting and decrypting individual blocks, writing the
+The program has methods for encrypting and decrypting individual blocks, writing the
 encrypted or decrypted blocks to a file, converting text to binary and back, storing the input as 64-bit blocks, transforming
 the secret key before each iteration of the function, each individual part of the round function process, and the round function itself.
 The program includes each method listed under 1.3 (Required Methods).
